@@ -29,7 +29,7 @@ export default function SettingsPage() {
                 </div>
                 <button
                     onClick={handleSave}
-                    className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-black text-sm rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-100"
+                    className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-black text-sm rounded-2xl hover:bg-green-700 transition-all shadow-xl shadow-green-100"
                 >
                     {saved ? <CheckCircle2 className="h-5 w-5" /> : <Save className="h-5 w-5" />}
                     {saved ? "PREFERENCES SAVED" : "SAVE CHANGES"}
@@ -49,7 +49,7 @@ export default function SettingsPage() {
                         <button
                             key={i}
                             className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all ${item.active
-                                ? "bg-white text-blue-600 shadow-sm border border-slate-100"
+                                ? "bg-white text-green-600 shadow-sm border border-slate-100"
                                 : "text-slate-400 hover:bg-white/50"
                                 }`}
                         >
@@ -64,17 +64,17 @@ export default function SettingsPage() {
                     <div className="bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm space-y-10">
                         <section className="space-y-6">
                             <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight flex items-center gap-3">
-                                <User className="h-6 w-6 text-blue-500" />
+                                <User className="h-6 w-6 text-green-500" />
                                 General Profile
                             </h2>
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Full Name</label>
-                                    <input className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-blue-500 font-bold" defaultValue="HOD CSE" />
+                                    <input className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-green-500 font-bold" defaultValue="HOD CSE" />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Email Address</label>
-                                    <input className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-blue-500 font-bold" defaultValue="hod.cse@institution.edu" />
+                                    <input className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-green-500 font-bold" defaultValue="hod.cse@institution.edu" />
                                 </div>
                             </div>
                         </section>
@@ -95,7 +95,7 @@ export default function SettingsPage() {
                                             <p className="font-bold text-slate-900 text-sm">{item.label}</p>
                                             <p className="text-xs text-slate-500">{item.desc}</p>
                                         </div>
-                                        <div className="h-6 w-11 bg-blue-600 rounded-full relative cursor-pointer shadow-inner">
+                                        <div className="h-6 w-11 bg-green-600 rounded-full relative cursor-pointer shadow-inner">
                                             <div className="absolute right-1 top-1 h-4 w-4 bg-white rounded-full shadow-md" />
                                         </div>
                                     </div>

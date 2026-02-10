@@ -59,11 +59,11 @@ export function Sidebar() {
         <aside className="fixed left-0 top-0 z-40 h-screen w-72 bg-slate-900 text-white shadow-2xl transition-all duration-300">
             {/* Branding */}
             <div className="flex h-24 items-center gap-3 px-8 border-b border-white/5 bg-slate-900/50 backdrop-blur-xl">
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/20">
                     <Shield className="h-6 w-6 text-white" />
                 </div>
                 <h1 className="text-xl font-black tracking-tighter uppercase italic">
-                    IT <span className="text-blue-500">Services</span>
+                    IT <span className="text-green-500">Services</span>
                 </h1>
             </div>
 
@@ -75,7 +75,7 @@ export function Sidebar() {
                     </div>
                     <div className="flex-1 overflow-hidden">
                         <p className="text-xs font-black truncate">{session?.user?.name || "User"}</p>
-                        <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest">{session?.user?.role || "Role"}</p>
+                        <p className="text-[10px] text-green-400 font-bold uppercase tracking-widest">{session?.user?.role || "Role"}</p>
                     </div>
                 </div>
             </div>
@@ -91,7 +91,7 @@ export function Sidebar() {
                             className={cn(
                                 "flex items-center gap-4 px-6 py-4 rounded-[20px] transition-all duration-300 group",
                                 isActive
-                                    ? "bg-blue-600 text-white shadow-xl shadow-blue-900/40"
+                                    ? "bg-green-600 text-white shadow-xl shadow-green-900/40"
                                     : "text-slate-400 hover:text-white hover:bg-white/5"
                             )}
                         >

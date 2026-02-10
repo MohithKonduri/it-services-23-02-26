@@ -293,11 +293,11 @@ function AssetsContent() {
             {/* Control Bar */}
             <div className="bg-white/60 backdrop-blur-xl p-4 rounded-[32px] shadow-xl shadow-slate-200/50 border border-white/50 flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
                 <div className="relative w-full md:w-[450px] group">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-green-600 transition-colors" />
                     <input
                         type="text"
                         placeholder="Search by System ID, MAC, or Name..."
-                        className="w-full pl-12 pr-4 py-4 bg-slate-100/50 border-none rounded-[20px] text-xs font-bold focus:ring-2 focus:ring-blue-600 transition-all placeholder:text-slate-400"
+                        className="w-full pl-12 pr-4 py-4 bg-slate-100/50 border-none rounded-[20px] text-xs font-bold focus:ring-2 focus:ring-green-600 transition-all placeholder:text-slate-400"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
@@ -305,7 +305,7 @@ function AssetsContent() {
                 <div className="flex items-center gap-3 w-full md:w-auto">
                     <div className="h-10 w-[1px] bg-slate-200 mx-2 hidden md:block" />
                     <select
-                        className="bg-white border border-slate-100 rounded-[18px] text-[10px] font-black uppercase tracking-widest px-6 py-3 focus:ring-2 focus:ring-blue-600 cursor-pointer shadow-sm hover:bg-slate-50 transition-all"
+                        className="bg-white border border-slate-100 rounded-[18px] text-[10px] font-black uppercase tracking-widest px-6 py-3 focus:ring-2 focus:ring-green-600 cursor-pointer shadow-sm hover:bg-slate-50 transition-all"
                         value={filterType}
                         onChange={(e) => setFilterType(e.target.value)}
                     >
@@ -316,7 +316,7 @@ function AssetsContent() {
                         <option value="ROUTER">Network: Router</option>
                     </select>
                     <select
-                        className="bg-white border border-slate-100 rounded-[18px] text-[10px] font-black uppercase tracking-widest px-6 py-3 focus:ring-2 focus:ring-blue-600 cursor-pointer shadow-sm hover:bg-slate-50 transition-all"
+                        className="bg-white border border-slate-100 rounded-[18px] text-[10px] font-black uppercase tracking-widest px-6 py-3 focus:ring-2 focus:ring-green-600 cursor-pointer shadow-sm hover:bg-slate-50 transition-all"
                         value={filterLab}
                         onChange={(e) => setFilterLab(e.target.value)}
                     >
@@ -324,7 +324,7 @@ function AssetsContent() {
                         {labs.map(l => <option key={l.id} value={l.id}>Lab: {l.name}</option>)}
                     </select>
                     <select
-                        className={`px-6 py-3 rounded-[18px] text-[10px] font-black uppercase tracking-widest cursor-pointer shadow-sm transition-all border ${filterStatus === 'ALL' ? 'bg-white border-slate-100' : 'bg-blue-600 text-white border-blue-600'
+                        className={`px-6 py-3 rounded-[18px] text-[10px] font-black uppercase tracking-widest cursor-pointer shadow-sm transition-all border ${filterStatus === 'ALL' ? 'bg-white border-slate-100' : 'bg-green-600 text-white border-green-600'
                             }`}
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
@@ -341,7 +341,7 @@ function AssetsContent() {
             <div className="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
                 {loading ? (
                     <div className="p-20 flex flex-col items-center justify-center text-slate-400">
-                        <Loader2 className="h-10 w-10 animate-spin mb-4 text-blue-500" />
+                        <Loader2 className="h-10 w-10 animate-spin mb-4 text-green-500" />
                         <p className="font-bold text-sm uppercase tracking-widest">Accessing Secure Records...</p>
                     </div>
                 ) : (
@@ -441,18 +441,18 @@ function AssetsContent() {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Asset Name</label>
-                            <input name="name" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. Dell Optiplex 7090" />
+                            <input name="name" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" placeholder="e.g. Dell Optiplex 7090" />
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Asset Number (Tag)</label>
-                            <input name="assetNumber" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. CSE-PC-01" />
+                            <input name="assetNumber" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" placeholder="e.g. CSE-PC-01" />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Asset Type</label>
-                            <select name="type" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500">
+                            <select name="type" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500">
                                 <option value="DESKTOP">Desktop</option>
                                 <option value="LAPTOP">Laptop</option>
                                 <option value="SERVER">Server</option>
@@ -461,7 +461,7 @@ function AssetsContent() {
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">MAC Address</label>
-                            <input name="macAddress" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. 00:0A:95:9D:68:16" />
+                            <input name="macAddress" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" placeholder="e.g. 00:0A:95:9D:68:16" />
                             <input type="hidden" name="category" value="Computing" />
                         </div>
                     </div>
@@ -469,14 +469,14 @@ function AssetsContent() {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Department</label>
-                            <select name="departmentId" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500">
+                            <select name="departmentId" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500">
                                 <option value="">Select Department</option>
                                 {departments.map(d => <option key={d.id} value={d.id}>{d.name} ({d.code})</option>)}
                             </select>
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Lab (Optional)</label>
-                            <select name="labId" className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500">
+                            <select name="labId" className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500">
                                 <option value="">Global / No Lab</option>
                                 {labs.map(l => <option key={l.id} value={l.id}>{l.name} ({l.code})</option>)}
                             </select>
@@ -486,18 +486,18 @@ function AssetsContent() {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Brand</label>
-                            <input name="brand" className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500" />
+                            <input name="brand" className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" />
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Model</label>
-                            <input name="model" className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500" />
+                            <input name="model" className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" />
                         </div>
                     </div>
 
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full py-4 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-green-600 text-white font-black rounded-2xl shadow-xl shadow-green-200 hover:bg-green-700 transition-all flex items-center justify-center gap-2"
                     >
                         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : "REGISTER ASSET SYSTEM"}
                     </button>

@@ -130,7 +130,7 @@ export default function TicketsPage() {
                 {session?.user?.role === "LAB_INCHARGE" && (
                     <button
                         onClick={() => setShowCreateModal(true)}
-                        className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white font-black text-sm rounded-2xl hover:bg-purple-700 shadow-xl shadow-purple-200 transition-all"
+                        className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-black text-sm rounded-2xl hover:bg-green-700 shadow-xl shadow-green-200 transition-all"
                     >
                         <Plus className="h-4 w-4" />
                         RAISE SUPPORT REQUEST
@@ -142,11 +142,11 @@ export default function TicketsPage() {
                 {/* Status Bubbles */}
                 <div className="xl:col-span-1 space-y-4">
                     {[
-                        { label: "New & Open", count: safeTickets.filter(t => t.status === "SUBMITTED").length, color: "text-blue-600", bg: "bg-blue-50" },
+                        { label: "New & Open", count: safeTickets.filter(t => t.status === "SUBMITTED").length, color: "text-emerald-600", bg: "bg-emerald-50" },
                         { label: "In Progress", count: safeTickets.filter(t => t.status === "PROCESSING").length, color: "text-orange-600", bg: "bg-orange-50" },
                         { label: "Resolved", count: safeTickets.filter(t => t.status === "RESOLVED" || t.status === "DEPLOYED").length, color: "text-green-600", bg: "bg-green-50" },
                     ].map((stat, i) => (
-                        <div key={i} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group cursor-pointer hover:border-blue-200 transition-all">
+                        <div key={i} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group cursor-pointer hover:border-green-200 transition-all">
                             <div>
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</p>
                                 <p className={`text-2xl font-black ${stat.color} mt-1`}>{stat.count}</p>
@@ -174,7 +174,7 @@ export default function TicketsPage() {
                                     <input
                                         type="text"
                                         placeholder="Search requests..."
-                                        className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-purple-500 transition-all w-48"
+                                        className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-green-500 transition-all w-48"
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
                                     />
@@ -185,7 +185,7 @@ export default function TicketsPage() {
                         <div className="divide-y divide-slate-50">
                             {loading ? (
                                 <div className="p-20 text-center text-slate-400 font-bold uppercase tracking-widest flex flex-col items-center">
-                                    <Loader2 className="h-10 w-10 animate-spin mb-4 text-purple-600" />
+                                    <Loader2 className="h-10 w-10 animate-spin mb-4 text-green-600" />
                                     Loading Secure Queue...
                                 </div>
                             ) : (
@@ -195,22 +195,22 @@ export default function TicketsPage() {
                                             <div className="flex items-start gap-6">
                                                 <div className={`mt-1 h-14 w-14 rounded-3xl flex items-center justify-center flex-shrink-0 font-black text-xs ${ticket.priority === "CRITICAL" ? "bg-red-50 text-red-600 border border-red-100" :
                                                     ticket.priority === "HIGH" ? "bg-orange-50 text-orange-600 border-orange-100" :
-                                                        "bg-blue-50 text-blue-600 border border-blue-100"
+                                                        "bg-emerald-50 text-emerald-600 border border-emerald-100"
                                                     }`}>
                                                     {ticket.priority.charAt(0)}
                                                 </div>
                                                 <div>
                                                     <div className="flex items-center gap-3 mb-1">
                                                         <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${ticket.issueType === "HARDWARE" ? "bg-red-50 text-red-600 border-red-100" :
-                                                            ticket.issueType === "SOFTWARE" ? "bg-blue-50 text-blue-600 border-blue-100" :
-                                                                "bg-purple-50 text-purple-600 border-purple-100"
+                                                            ticket.issueType === "SOFTWARE" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                                                "bg-green-50 text-green-600 border-green-100"
                                                             }`}>
                                                             {ticket.issueType}
                                                         </span>
                                                         <span className="text-slate-300">•</span>
                                                         <span className="text-[10px] font-black text-slate-400 tracking-widest uppercase">{ticket.ticketNumber}</span>
                                                     </div>
-                                                    <h4 className="text-lg font-bold text-slate-900 group-hover:text-purple-600 transition-colors uppercase tracking-tight">{ticket.title}</h4>
+                                                    <h4 className="text-lg font-bold text-slate-900 group-hover:text-green-600 transition-colors uppercase tracking-tight">{ticket.title}</h4>
                                                     <p className="text-slate-500 text-sm mt-1 line-clamp-1">{ticket.description}</p>
                                                     <div className="flex items-center gap-4 mt-4">
                                                         <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">ASSET: {ticket.asset?.assetNumber || "GENERAL"}</span>
@@ -226,7 +226,7 @@ export default function TicketsPage() {
                                                 </div>
                                                 <div className="flex flex-col gap-2">
                                                     <span className={`px-4 py-1.5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center ${ticket.status === "DEPLOYED" || ticket.status === "RESOLVED" ? "bg-green-500 text-white" :
-                                                        ticket.status === "PROCESSING" ? "bg-blue-500 text-white" :
+                                                        ticket.status === "PROCESSING" ? "bg-emerald-500 text-white" :
                                                             "bg-slate-900 text-white"
                                                         }`}>
                                                         {ticket.status}
@@ -234,7 +234,7 @@ export default function TicketsPage() {
                                                     {session?.user?.role === "ADMIN" && ticket.status !== "RESOLVED" && (
                                                         <button
                                                             onClick={() => updateStatus(ticket.id, ticket.status)}
-                                                            className="text-[10px] font-black text-purple-600 hover:text-purple-700 uppercase tracking-widest flex items-center justify-center gap-1"
+                                                            className="text-[10px] font-black text-green-600 hover:text-green-700 uppercase tracking-widest flex items-center justify-center gap-1"
                                                         >
                                                             UPDATE STATUS <ArrowRight className="h-3 w-3" />
                                                         </button>
@@ -260,18 +260,18 @@ export default function TicketsPage() {
                 <form onSubmit={handleCreateTicket} className="space-y-6">
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Diagnostic Title</label>
-                        <input name="title" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500" placeholder="e.g. System blue screen on boot" />
+                        <input name="title" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" placeholder="e.g. System blue screen on boot" />
                     </div>
 
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Detailed Description</label>
-                        <textarea name="description" required rows={4} className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500" placeholder="Explain the technical issue in detail..." />
+                        <textarea name="description" required rows={4} className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" placeholder="Explain the technical issue in detail..." />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Issue Type</label>
-                            <select name="issueType" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500">
+                            <select name="issueType" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500">
                                 <option value="HARDWARE">Hardware failure</option>
                                 <option value="SOFTWARE">Software / OS issue</option>
                                 <option value="NETWORK">Network / Connectivity</option>
@@ -280,7 +280,7 @@ export default function TicketsPage() {
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">System Priority</label>
-                            <select name="priority" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500">
+                            <select name="priority" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500">
                                 <option value="LOW">Low - No impact</option>
                                 <option value="NORMAL">Normal - Standard</option>
                                 <option value="HIGH">High - Operational risk</option>
@@ -294,7 +294,7 @@ export default function TicketsPage() {
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Affected Asset</label>
                             <select
                                 name="assetId"
-                                className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500"
+                                className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500"
                                 value={selectedAssetId}
                                 onChange={(e) => setSelectedAssetId(e.target.value)}
                             >
@@ -304,7 +304,7 @@ export default function TicketsPage() {
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Deployment Location (Lab)</label>
-                            <select name="labId" className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500">
+                            <select name="labId" className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500">
                                 <option value="">Institutional Global</option>
                                 {labs.map(l => <option key={l.id} value={l.id}>{l.name} ({l.code})</option>)}
                             </select>
@@ -314,7 +314,7 @@ export default function TicketsPage() {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full py-4 bg-purple-600 text-white font-black rounded-2xl shadow-xl shadow-purple-200 hover:bg-purple-700 transition-all flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-green-600 text-white font-black rounded-2xl shadow-xl shadow-green-200 hover:bg-green-700 transition-all flex items-center justify-center gap-2"
                     >
                         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : "DISPATCH SUPPORT REQUEST"}
                     </button>

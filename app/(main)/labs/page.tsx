@@ -22,7 +22,7 @@ import { Modal } from "@/components/ui/modal";
 
 export default function LabsPage() {
     return (
-        <Suspense fallback={<div className="p-20 flex justify-center"><Loader2 className="h-12 w-12 animate-spin text-purple-600" /></div>}>
+        <Suspense fallback={<div className="p-20 flex justify-center"><Loader2 className="h-12 w-12 animate-spin text-green-600" /></div>}>
             <LabsContent />
         </Suspense>
     );
@@ -258,13 +258,13 @@ function LabsContent() {
         <div className="p-6 lg:p-10 space-y-10 bg-[#fbfbfb] min-h-screen">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight tracking-tighter uppercase italic">Institutional <span className="text-purple-600">Laboratories</span></h1>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight tracking-tighter uppercase italic">Institutional <span className="text-green-600">Laboratories</span></h1>
                     <p className="text-slate-500 font-medium font-bold uppercase text-[10px] tracking-widest mt-1">Technically equipped workspaces & specialized monitoring</p>
                 </div>
                 {(session?.user?.role === "DEAN") && (
                     <button
                         onClick={() => setIsAddModalOpen(true)}
-                        className="flex items-center gap-3 px-8 py-4 bg-purple-600 text-white font-black text-xs rounded-2xl hover:bg-purple-700 shadow-xl shadow-purple-100 transition-all uppercase tracking-widest"
+                        className="flex items-center gap-3 px-8 py-4 bg-green-600 text-white font-black text-xs rounded-2xl hover:bg-green-700 shadow-xl shadow-green-100 transition-all uppercase tracking-widest"
                     >
                         <Plus className="h-5 w-5" />
                         Create New Lab Space
@@ -285,15 +285,15 @@ function LabsContent() {
 
             {loading ? (
                 <div className="p-20 flex flex-col items-center justify-center text-slate-300">
-                    <Loader2 className="h-12 w-12 animate-spin mb-4 text-purple-600" />
+                    <Loader2 className="h-12 w-12 animate-spin mb-4 text-green-600" />
                     <p className="font-black text-xs uppercase tracking-[0.3em] italic">Accessing Lab Records</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
                     {filteredLabs.length > 0 ? filteredLabs.map((lab) => (
-                        <div key={lab.id} className="bg-white p-10 rounded-[48px] border border-slate-100 shadow-sm hover:shadow-2xl hover:border-purple-200 transition-all group relative flex flex-col lg:flex-row gap-10">
+                        <div key={lab.id} className="bg-white p-10 rounded-[48px] border border-slate-100 shadow-sm hover:shadow-2xl hover:border-green-200 transition-all group relative flex flex-col lg:flex-row gap-10">
                             <div className="lg:w-1/3">
-                                <div className="h-40 w-full rounded-[40px] bg-slate-50 border border-slate-100 flex flex-col items-center justify-center group-hover:bg-purple-600 transition-colors duration-500 relative overflow-hidden">
+                                <div className="h-40 w-full rounded-[40px] bg-slate-50 border border-slate-100 flex flex-col items-center justify-center group-hover:bg-green-600 transition-colors duration-500 relative overflow-hidden">
                                     <div className="absolute inset-0 bg-grid-slate-200/50 [mask-image:linear-gradient(0deg,#fff,rgba(255,255,255,0.2))] group-hover:opacity-0 transition-opacity" />
                                     <Building2 className="h-10 w-10 text-slate-300 group-hover:text-white mb-2 relative z-10 transition-colors" />
                                     <p className="text-2xl font-black text-slate-900 group-hover:text-white relative z-10 transition-colors uppercase">{lab.code}</p>
@@ -313,7 +313,7 @@ function LabsContent() {
                             <div className="flex-1 space-y-8 flex flex-col justify-between">
                                 <div>
                                     <div className="flex items-center justify-between mb-2">
-                                        <span className="text-[10px] font-black text-purple-500 uppercase tracking-widest">{lab.department?.name}</span>
+                                        <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{lab.department?.name}</span>
                                         <div className="relative">
                                             <button
                                                 disabled={!(session?.user?.role === "DEAN")}
@@ -350,10 +350,10 @@ function LabsContent() {
                                             )}
                                         </div>
                                     </div>
-                                    <h3 className="text-3xl font-black text-slate-900 leading-tight uppercase tracking-tighter group-hover:text-purple-600 transition-colors">{lab.name}</h3>
+                                    <h3 className="text-3xl font-black text-slate-900 leading-tight uppercase tracking-tighter group-hover:text-green-600 transition-colors">{lab.name}</h3>
 
                                     <div className="flex items-center gap-4 mt-6 p-4 bg-slate-50 rounded-3xl border border-slate-100">
-                                        <div className="h-10 w-10 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600 font-bold">
+                                        <div className="h-10 w-10 bg-green-100 rounded-2xl flex items-center justify-center text-green-600 font-bold">
                                             <ShieldCheck className="h-5 w-5" />
                                         </div>
                                         <div>
@@ -366,7 +366,7 @@ function LabsContent() {
                                                     setSelectedLab(lab);
                                                     setIsAssignModalOpen(true);
                                                 }}
-                                                className="ml-auto text-[10px] font-black text-purple-600 hover:text-purple-700 uppercase tracking-widest underline underline-offset-4"
+                                                className="ml-auto text-[10px] font-black text-green-600 hover:text-green-700 uppercase tracking-widest underline underline-offset-4"
                                             >
                                                 {lab.incharge ? "Reassign" : "Assign Now"}
                                             </button>
@@ -434,17 +434,17 @@ function LabsContent() {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Lab Name</label>
-                            <input name="name" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500" placeholder="e.g. Advanced AI Lab" />
+                            <input name="name" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" placeholder="e.g. Advanced AI Lab" />
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Lab Code</label>
-                            <input name="code" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500" placeholder="e.g. CSE-601" />
+                            <input name="code" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" placeholder="e.g. CSE-601" />
                         </div>
                     </div>
 
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Physical Location</label>
-                        <input name="location" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500" placeholder="e.g. Block C, 2nd Floor" />
+                        <input name="location" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" placeholder="e.g. Block C, 2nd Floor" />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -453,7 +453,7 @@ function LabsContent() {
                             <select
                                 name="departmentId"
                                 required
-                                className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500"
+                                className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500"
                                 onChange={(e) => {
                                     const deptId = e.target.value;
                                     const dept = departments.find(d => d.id === deptId);
@@ -470,7 +470,7 @@ function LabsContent() {
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Capacity (Units)</label>
-                            <input name="capacity" type="number" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500" placeholder="40" />
+                            <input name="capacity" type="number" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" placeholder="40" />
                         </div>
                     </div>
 
@@ -478,7 +478,7 @@ function LabsContent() {
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Allocate to HOD (Department Lead)</label>
                         <select
                             name="inchargeId"
-                            className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500"
+                            className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500"
                             value={allocatedHodId}
                             onChange={(e) => setAllocatedHodId(e.target.value)}
                         >
@@ -494,7 +494,7 @@ function LabsContent() {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full py-4 bg-purple-600 text-white font-black rounded-2xl shadow-xl shadow-purple-200 hover:bg-purple-700 transition-all flex items-center justify-center gap-2 uppercase tracking-[0.2em] text-xs"
+                        className="w-full py-4 bg-green-600 text-white font-black rounded-2xl shadow-xl shadow-green-200 hover:bg-green-700 transition-all flex items-center justify-center gap-2 uppercase tracking-[0.2em] text-xs"
                     >
                         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : "Provision Lab Space"}
                     </button>
@@ -522,17 +522,17 @@ function LabsContent() {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Lab Name</label>
-                            <input name="name" defaultValue={selectedLab?.name} required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500" />
+                            <input name="name" defaultValue={selectedLab?.name} required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" />
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Lab Code</label>
-                            <input name="code" defaultValue={selectedLab?.code} required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500" />
+                            <input name="code" defaultValue={selectedLab?.code} required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" />
                         </div>
                     </div>
 
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Physical Location</label>
-                        <input name="location" defaultValue={selectedLab?.location} required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500" />
+                        <input name="location" defaultValue={selectedLab?.location} required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -542,14 +542,14 @@ function LabsContent() {
                                 name="departmentId"
                                 defaultValue={selectedLab?.departmentId}
                                 required
-                                className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500"
+                                className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500"
                             >
                                 {departments.map(d => <option key={d.id} value={d.id}>{d.name} ({d.code})</option>)}
                             </select>
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Capacity (Units)</label>
-                            <input name="capacity" type="number" defaultValue={selectedLab?.capacity} required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500" />
+                            <input name="capacity" type="number" defaultValue={selectedLab?.capacity} required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" />
                         </div>
                     </div>
 
@@ -557,7 +557,7 @@ function LabsContent() {
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Assigned Incharge</label>
                         <select
                             name="inchargeId"
-                            className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500"
+                            className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500"
                             defaultValue={selectedLab?.inchargeId || ""}
                         >
                             <option value="">Pending Allocation</option>
@@ -572,7 +572,7 @@ function LabsContent() {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full py-4 bg-purple-600 text-white font-black rounded-2xl shadow-xl shadow-purple-200 hover:bg-purple-700 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-xs"
+                        className="w-full py-4 bg-green-600 text-white font-black rounded-2xl shadow-xl shadow-green-200 hover:bg-green-700 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-xs"
                     >
                         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : "UPDATE LABORATORY CONFIG"}
                     </button>
@@ -587,9 +587,9 @@ function LabsContent() {
                 className="max-w-xl"
             >
                 <form onSubmit={handleAssignIncharge} className="space-y-6">
-                    <div className="p-6 bg-purple-50 rounded-3xl border border-purple-100 space-y-2">
-                        <h4 className="text-sm font-black text-purple-900 uppercase">Operational Lab: {selectedLab?.name}</h4>
-                        <p className="text-xs text-purple-600 opacity-80 uppercase tracking-widest font-bold font-black">{selectedLab?.code} • {selectedLab?.location}</p>
+                    <div className="p-6 bg-green-50 rounded-3xl border border-green-100 space-y-2">
+                        <h4 className="text-sm font-black text-green-900 uppercase">Operational Lab: {selectedLab?.name}</h4>
+                        <p className="text-xs text-green-600 opacity-80 uppercase tracking-widest font-bold font-black">{selectedLab?.code} • {selectedLab?.location}</p>
                     </div>
 
                     {error && (
@@ -604,7 +604,7 @@ function LabsContent() {
                         <select
                             name="inchargeId"
                             required
-                            className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-purple-500 shadow-inner"
+                            className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-green-500 shadow-inner"
                             defaultValue={selectedLab?.inchargeId || ""}
                         >
                             <option value="">Pending Assignment</option>
@@ -623,7 +623,7 @@ function LabsContent() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="flex-[2] py-4 bg-purple-600 text-white font-black rounded-2xl shadow-xl shadow-purple-200 hover:bg-purple-700 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-[10px]"
+                            className="flex-[2] py-4 bg-green-600 text-white font-black rounded-2xl shadow-xl shadow-green-200 hover:bg-green-700 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-[10px]"
                         >
                             {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : "Confirm Assignment"}
                         </button>
@@ -650,7 +650,7 @@ function LabsContent() {
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Purpose / Lab Name</label>
                         <input
                             required
-                            className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-purple-500 shadow-sm"
+                            className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-green-500 shadow-sm"
                             placeholder="e.g. Specialized Cybersecurity Research Lab"
                             value={requestForm.title}
                             onChange={e => setRequestForm({ ...requestForm, title: e.target.value })}
@@ -662,7 +662,7 @@ function LabsContent() {
                         <textarea
                             required
                             rows={4}
-                            className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-purple-500 shadow-sm"
+                            className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-green-500 shadow-sm"
                             placeholder="Describe the need for this space, expected student capacity, and specific technical requirements..."
                             value={requestForm.description}
                             onChange={e => setRequestForm({ ...requestForm, description: e.target.value })}
@@ -672,7 +672,7 @@ function LabsContent() {
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Urgency Level</label>
                         <select
-                            className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-black uppercase tracking-widest focus:ring-2 focus:ring-purple-500 shadow-sm"
+                            className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-black uppercase tracking-widest focus:ring-2 focus:ring-green-500 shadow-sm"
                             value={requestForm.priority}
                             onChange={e => setRequestForm({ ...requestForm, priority: e.target.value })}
                         >
@@ -686,7 +686,7 @@ function LabsContent() {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full py-5 bg-purple-600 text-white font-black rounded-3xl shadow-xl shadow-purple-100 hover:bg-purple-700 transition-all flex items-center justify-center gap-3 uppercase tracking-[0.2em] text-[10px]"
+                        className="w-full py-5 bg-green-600 text-white font-black rounded-3xl shadow-xl shadow-green-100 hover:bg-green-700 transition-all flex items-center justify-center gap-3 uppercase tracking-[0.2em] text-[10px]"
                     >
                         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Building2 className="h-5 w-5" />}
                         Submit Space Proposal

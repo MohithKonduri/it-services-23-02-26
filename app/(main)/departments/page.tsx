@@ -147,7 +147,7 @@ export default function DepartmentsPage() {
         <div className="p-6 lg:p-10 space-y-10 bg-slate-50 min-h-screen">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight tracking-tighter uppercase italic">Institutional <span className="text-blue-500">Departments</span></h1>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight tracking-tighter uppercase italic">Institutional <span className="text-green-600">Departments</span></h1>
                     <p className="text-slate-500 font-medium font-bold uppercase text-[10px] tracking-widest mt-1">Organizational hierarchy and resource distribution</p>
                 </div>
                 {(session?.user?.role === "DEAN" || session?.user?.role === "ADMIN") && (
@@ -169,12 +169,12 @@ export default function DepartmentsPage() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {departments.map((dept) => (
-                        <div key={dept.id} className="bg-white p-10 rounded-[48px] border border-slate-100 shadow-sm hover:shadow-2xl hover:border-blue-100 transition-all group relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-12 -mr-16 -mt-16 bg-blue-50 rounded-full opacity-50 scale-0 group-hover:scale-100 transition-transform duration-700" />
+                        <div key={dept.id} className="bg-white p-10 rounded-[48px] border border-slate-100 shadow-sm hover:shadow-2xl hover:border-green-100 transition-all group relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-12 -mr-16 -mt-16 bg-green-50 rounded-full opacity-50 scale-0 group-hover:scale-100 transition-transform duration-700" />
 
                             <div className="relative z-10 space-y-8">
                                 <div className="flex items-start justify-between">
-                                    <div className="h-20 w-20 rounded-[32px] bg-slate-100 flex items-center justify-center font-black text-2xl text-slate-900 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
+                                    <div className="h-20 w-20 rounded-[32px] bg-slate-100 flex items-center justify-center font-black text-2xl text-slate-900 group-hover:bg-green-600 group-hover:text-white transition-all duration-500">
                                         {dept.code}
                                     </div>
                                     <div className="relative">
@@ -214,7 +214,7 @@ export default function DepartmentsPage() {
                                 </div>
 
                                 <div>
-                                    <h3 className="text-2xl font-black text-slate-900 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{dept.name}</h3>
+                                    <h3 className="text-2xl font-black text-slate-900 group-hover:text-green-600 transition-colors uppercase tracking-tight">{dept.name}</h3>
                                     <div className="flex items-center gap-3 mt-4">
                                         <div className="h-8 w-8 bg-slate-100 rounded-full border border-slate-200 flex items-center justify-center text-slate-400">
                                             <Users className="h-4 w-4" />
@@ -230,7 +230,7 @@ export default function DepartmentsPage() {
                                     <div className="p-4 bg-slate-50 rounded-3xl group-hover:bg-white transition-colors border border-transparent group-hover:border-slate-50">
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Labs</p>
                                         <div className="flex items-center gap-2">
-                                            <Building2 className="h-4 w-4 text-blue-500" />
+                                            <Building2 className="h-4 w-4 text-emerald-500" />
                                             <span className="font-black text-slate-900">{dept.labs?.length || 0}</span>
                                         </div>
                                     </div>
@@ -245,7 +245,7 @@ export default function DepartmentsPage() {
 
                                 <button
                                     onClick={() => router.push(`/labs?deptId=${dept.id}`)}
-                                    className="w-full flex items-center justify-center gap-3 py-4 bg-slate-900 text-white rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] transition-all group-hover:bg-blue-600 shadow-xl shadow-slate-200"
+                                    className="w-full flex items-center justify-center gap-3 py-4 bg-slate-900 text-white rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] transition-all group-hover:bg-green-600 shadow-xl shadow-slate-200"
                                 >
                                     Manage Resources
                                     <ArrowRight className="h-4 w-4" />
@@ -319,19 +319,19 @@ export default function DepartmentsPage() {
                     )}
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Department Name</label>
-                        <input name="name" defaultValue={selectedDept?.name} required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-600" />
+                        <input name="name" defaultValue={selectedDept?.name} required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-600" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Dept Code</label>
-                        <input name="code" defaultValue={selectedDept?.code} required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-600" />
+                        <input name="code" defaultValue={selectedDept?.code} required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-600" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Description</label>
-                        <textarea name="description" defaultValue={selectedDept?.description} className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-600" />
+                        <textarea name="description" defaultValue={selectedDept?.description} className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-600" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Head of Department (HOD)</label>
-                        <select name="hodId" defaultValue={selectedDept?.hodId || ""} className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-600">
+                        <select name="hodId" defaultValue={selectedDept?.hodId || ""} className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-600">
                             <option value="">Select HOD</option>
                             {hods.map(h => <option key={h.id} value={h.id}>{h.name} ({h.email})</option>)}
                         </select>
@@ -339,7 +339,7 @@ export default function DepartmentsPage() {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full py-4 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-[10px]"
+                        className="w-full py-4 bg-green-600 text-white font-black rounded-2xl shadow-xl shadow-green-200 hover:bg-green-700 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-[10px]"
                     >
                         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : "UPDATE CONFIGURATION"}
                     </button>

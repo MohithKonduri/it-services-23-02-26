@@ -102,11 +102,11 @@ export default function HODRegisterPage() {
                 </div>
 
                 <div className="relative z-10">
-                    <div className="h-16 w-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-blue-900/40">
+                    <div className="h-16 w-16 bg-green-600 rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-green-900/40">
                         <Building2 className="h-8 w-8 text-white" />
                     </div>
                     <h1 className="text-5xl font-black text-white mb-4 uppercase tracking-tight italic">
-                        Institutional <span className="text-blue-500">Onboarding</span>
+                        Institutional <span className="text-green-500">Onboarding</span>
                     </h1>
                     <p className="text-xl text-slate-400 font-medium max-w-md">
                         Begin your journey as a Department Head. Every registration requires official Dean acceptance.
@@ -141,11 +141,11 @@ export default function HODRegisterPage() {
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Full Professional Name</label>
                             <div className="relative group">
-                                <Users className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-blue-500 transition-colors" />
+                                <Users className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-green-500 transition-colors" />
                                 <input
                                     name="name"
                                     required
-                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-[20px] outline-none transition-all font-bold text-slate-700 shadow-sm"
+                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-green-500 focus:bg-white rounded-[20px] outline-none transition-all font-bold text-slate-700 shadow-sm"
                                     placeholder="e.g. Dr. Jane Smith"
                                 />
                             </div>
@@ -154,12 +154,12 @@ export default function HODRegisterPage() {
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Institutional Email</label>
                             <div className="relative group">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-blue-500 transition-colors" />
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-green-500 transition-colors" />
                                 <input
                                     name="email"
                                     type="email"
                                     required
-                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-[20px] outline-none transition-all font-bold text-slate-700 shadow-sm"
+                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-green-500 focus:bg-white rounded-[20px] outline-none transition-all font-bold text-slate-700 shadow-sm"
                                     placeholder="hod.dept@institution.edu"
                                 />
                             </div>
@@ -172,18 +172,18 @@ export default function HODRegisterPage() {
                                     <button
                                         type="button"
                                         onClick={() => setIsManualDept(!isManualDept)}
-                                        className="text-[9px] font-black uppercase tracking-tighter text-blue-500 hover:text-blue-600 underline"
+                                        className="text-[9px] font-black uppercase tracking-tighter text-green-500 hover:text-green-600 underline"
                                     >
                                         {isManualDept ? "Select Existing" : "Enter Manually"}
                                     </button>
                                 </div>
                                 {isManualDept ? (
                                     <div className="relative group">
-                                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-blue-500 transition-colors" />
+                                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-green-500 transition-colors" />
                                         <input
                                             name="departmentName"
                                             required
-                                            className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-[20px] outline-none transition-all font-bold text-slate-700 shadow-sm"
+                                            className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-green-500 focus:bg-white rounded-[20px] outline-none transition-all font-bold text-slate-700 shadow-sm"
                                             placeholder="Department Name"
                                         />
                                     </div>
@@ -191,7 +191,7 @@ export default function HODRegisterPage() {
                                     <select
                                         name="departmentId"
                                         required
-                                        className="w-full px-4 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-[20px] outline-none transition-all font-black text-xs uppercase tracking-widest text-slate-700 shadow-sm appearance-none cursor-pointer"
+                                        className="w-full px-4 py-4 bg-slate-50 border-2 border-transparent focus:border-green-500 focus:bg-white rounded-[20px] outline-none transition-all font-black text-xs uppercase tracking-widest text-slate-700 shadow-sm appearance-none cursor-pointer"
                                     >
                                         <option value="">Select Department</option>
                                         {departments.map(d => <option key={d.id} value={d.id}>{d.name} ({d.code})</option>)}
@@ -202,12 +202,12 @@ export default function HODRegisterPage() {
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Account Password</label>
                                 <div className="relative group">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-blue-500 transition-colors" />
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-green-500 transition-colors" />
                                     <input
                                         name="password"
                                         type={showPassword ? "text" : "password"}
                                         required
-                                        className="w-full pl-12 pr-12 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-[20px] outline-none transition-all font-bold text-slate-700 shadow-sm"
+                                        className="w-full pl-12 pr-12 py-4 bg-slate-50 border-2 border-transparent focus:border-green-500 focus:bg-white rounded-[20px] outline-none transition-all font-bold text-slate-700 shadow-sm"
                                         placeholder="••••••••"
                                     />
                                     <button
@@ -232,14 +232,14 @@ export default function HODRegisterPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-5 bg-blue-600 text-white font-black rounded-[24px] shadow-2xl shadow-blue-200 hover:bg-blue-700 hover:shadow-blue-300 transition-all flex items-center justify-center gap-3 uppercase tracking-[0.2em] text-[11px]"
+                                className="w-full py-5 bg-green-600 text-white font-black rounded-[24px] shadow-2xl shadow-green-200 hover:bg-green-700 hover:shadow-green-300 transition-all flex items-center justify-center gap-3 uppercase tracking-[0.2em] text-[11px]"
                             >
                                 {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Submit For Acceptance"}
                             </button>
                         </div>
 
                         <p className="text-center text-[10px] font-black text-slate-400 uppercase tracking-widest mt-6">
-                            Already have an accepted account? <button type="button" onClick={() => router.push("/login/hod")} className="text-blue-500 hover:underline">Sign In</button>
+                            Already have an accepted account? <button type="button" onClick={() => router.push("/login/hod")} className="text-green-500 hover:underline">Sign In</button>
                         </p>
                     </form>
                 </div>

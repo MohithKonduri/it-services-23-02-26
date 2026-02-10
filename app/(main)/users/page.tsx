@@ -116,7 +116,7 @@ export default function UsersPage() {
                 {session?.user?.role !== "DEAN" && (
                     <button
                         onClick={() => setIsAddModalOpen(true)}
-                        className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-black text-sm rounded-2xl hover:bg-blue-700 shadow-xl shadow-blue-200 transition-all"
+                        className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-black text-sm rounded-2xl hover:bg-green-700 shadow-xl shadow-green-200 transition-all"
                     >
                         <Plus className="h-4 w-4" />
                         REGISTER NEW USER
@@ -130,7 +130,7 @@ export default function UsersPage() {
                     <input
                         type="text"
                         placeholder="Search by name or email..."
-                        className="w-full pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                        className="w-full pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500 transition-all"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
@@ -140,7 +140,7 @@ export default function UsersPage() {
             <div className="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
                 {loading ? (
                     <div className="p-20 flex flex-col items-center justify-center text-slate-400">
-                        <Loader2 className="h-10 w-10 animate-spin mb-4 text-blue-500" />
+                        <Loader2 className="h-10 w-10 animate-spin mb-4 text-green-500" />
                         <p className="font-bold text-sm uppercase tracking-widest">Accessing Secure Records...</p>
                     </div>
                 ) : (
@@ -157,10 +157,10 @@ export default function UsersPage() {
                             </thead>
                             <tbody className="divide-y divide-slate-50">
                                 {filteredUsers.map((user) => (
-                                    <tr key={user.id} className="hover:bg-blue-50/20 transition-colors group">
+                                    <tr key={user.id} className="hover:bg-green-50/20 transition-colors group">
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-4">
-                                                <div className="h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-black group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                                <div className="h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-black group-hover:bg-green-600 group-hover:text-white transition-all">
                                                     <User className="h-6 w-6" />
                                                 </div>
                                                 <div>
@@ -173,7 +173,7 @@ export default function UsersPage() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-6 font-bold text-xs uppercase tracking-widest flex items-center gap-2 mt-2">
-                                            <Shield className={`h-4 w-4 ${user.role === "ADMIN" ? "text-red-500" : "text-blue-500"}`} />
+                                            <Shield className={`h-4 w-4 ${user.role === "ADMIN" ? "text-emerald-500" : "text-green-500"}`} />
                                             {user.role}
                                         </td>
                                         <td className="px-6 py-6 font-bold text-xs text-slate-600 uppercase">
@@ -222,19 +222,19 @@ export default function UsersPage() {
                 <form onSubmit={handleAddUser} className="space-y-6">
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Full Name</label>
-                        <input name="name" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500" />
+                        <input name="name" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Email Address</label>
-                        <input name="email" type="email" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500" />
+                        <input name="email" type="email" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Security Password</label>
-                        <input name="password" type="password" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500" />
+                        <input name="password" type="password" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Permission Role</label>
-                        <select name="role" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500">
+                        <select name="role" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500">
                             <option value="ADMIN">System Admin</option>
                             <option value="DEAN">Academic Dean</option>
                             <option value="HOD">Department Head</option>
@@ -243,7 +243,7 @@ export default function UsersPage() {
                     </div>
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Department</label>
-                        <select name="departmentId" className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500">
+                        <select name="departmentId" className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500">
                             <option value="">No Department (Global)</option>
                             {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
                         </select>
@@ -251,7 +251,7 @@ export default function UsersPage() {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full py-4 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-green-600 text-white font-black rounded-2xl shadow-xl shadow-green-200 hover:bg-green-700 transition-all flex items-center justify-center gap-2"
                     >
                         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : "CREATE ACCESS ACCOUNT"}
                     </button>

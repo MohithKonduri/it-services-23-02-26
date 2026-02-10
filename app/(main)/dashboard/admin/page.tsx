@@ -121,7 +121,7 @@ export default function AdminDashboard() {
     if (loading) {
         return (
             <div className="flex h-[80vh] items-center justify-center">
-                <Loader2 className="h-12 w-12 animate-spin text-red-500" />
+                <Loader2 className="h-12 w-12 animate-spin text-green-500" />
             </div>
         );
     }
@@ -140,7 +140,7 @@ export default function AdminDashboard() {
                         <input
                             type="text"
                             placeholder="Quick search..."
-                            className="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-slate-900 transition-all w-64"
+                            className="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 transition-all w-64"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
                     { label: "Managed Systems", value: stats?.totalSystems || 0, icon: Shield, color: "text-slate-900", bg: "bg-slate-50" },
                     { label: "Active Servers", value: stats?.totalServers || 0, icon: Server, color: "text-slate-900", bg: "bg-slate-50" },
                     { label: "Network Nodes", value: stats?.totalRouters || 0, icon: Network, color: "text-slate-900", bg: "bg-slate-50" },
-                    { label: "Pending Requests", value: stats?.pendingTickets || 0, icon: Clock, color: "text-blue-600", bg: "bg-blue-50" },
+                    { label: "Pending Requests", value: stats?.pendingTickets || 0, icon: Clock, color: "text-green-600", bg: "bg-green-50" },
                 ].map((stat, i) => (
                     <div key={i} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all">
                         <div className="flex items-center gap-4">
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
                                     )}
                                 >
                                     Service Requests
-                                    {activeQueue === "TICKETS" && <div className="absolute bottom-0 left-0 w-full h-1 bg-red-600 rounded-full" />}
+                                    {activeQueue === "TICKETS" && <div className="absolute bottom-0 left-0 w-full h-1 bg-green-600 rounded-full" />}
                                 </button>
                                 <button
                                     onClick={() => setActiveQueue("REQUESTS")}
@@ -195,14 +195,14 @@ export default function AdminDashboard() {
                                 >
                                     Resource Requests
                                     {requests.length > 0 && (
-                                        <span className="ml-2 px-1.5 py-0.5 bg-red-100 text-red-600 rounded-md text-[10px] font-black">
+                                        <span className="ml-2 px-1.5 py-0.5 bg-green-100 text-green-600 rounded-md text-[10px] font-black">
                                             {requests.filter(r => r.status === "APPROVED").length}
                                         </span>
                                     )}
-                                    {activeQueue === "REQUESTS" && <div className="absolute bottom-0 left-0 w-full h-1 bg-red-600 rounded-full" />}
+                                    {activeQueue === "REQUESTS" && <div className="absolute bottom-0 left-0 w-full h-1 bg-green-600 rounded-full" />}
                                 </button>
                             </div>
-                            <Link href={activeQueue === "TICKETS" ? "/tickets" : "#"} className="text-sm font-medium text-red-600 hover:text-red-700">View All</Link>
+                            <Link href={activeQueue === "TICKETS" ? "/tickets" : "#"} className="text-sm font-medium text-green-600 hover:text-green-700">View All</Link>
                         </div>
                         <div className="divide-y divide-slate-50">
                             {activeQueue === "TICKETS" ? (
@@ -214,17 +214,17 @@ export default function AdminDashboard() {
                                     >
                                         <div className="flex items-start justify-between">
                                             <div className="flex gap-4">
-                                                <div className={`mt-1 h-3 w-3 rounded-full flex-shrink-0 animate-pulse ${ticket.priority === "CRITICAL" ? "bg-red-500" : "bg-blue-500"
+                                                <div className={`mt-1 h-3 w-3 rounded-full flex-shrink-0 animate-pulse ${ticket.priority === "CRITICAL" ? "bg-red-500" : "bg-emerald-500"
                                                     }`} />
                                                 <div>
-                                                    <h4 className="font-semibold text-slate-900 group-hover:text-red-600 transition-colors uppercase text-sm tracking-wide">
+                                                    <h4 className="font-semibold text-slate-900 group-hover:text-green-600 transition-colors uppercase text-sm tracking-wide">
                                                         {ticket.ticketNumber} • {ticket.title}
                                                     </h4>
                                                     <p className="text-slate-500 text-sm mt-1">{ticket.department?.name} • {ticket.lab?.name || "General"}</p>
                                                     <div className="flex items-center gap-2 mt-3">
                                                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase border ${ticket.issueType === "HARDWARE"
                                                             ? "bg-orange-50 text-orange-600 border-orange-100"
-                                                            : "bg-purple-50 text-purple-600 border-purple-100"
+                                                            : "bg-emerald-50 text-emerald-600 border-emerald-100"
                                                             }`}>
                                                             {ticket.issueType}
                                                         </span>
@@ -238,8 +238,8 @@ export default function AdminDashboard() {
                                             </div>
                                             <div className="flex flex-col items-end gap-2">
                                                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${ticket.status === "DEPLOYED" || ticket.status === "RESOLVED" ? "bg-green-100 text-green-700" :
-                                                    ticket.status === "PROCESSING" ? "bg-blue-100 text-blue-700" :
-                                                        "bg-red-100 text-red-700"
+                                                    ticket.status === "PROCESSING" ? "bg-emerald-100 text-emerald-700" :
+                                                        "bg-green-100 text-green-700"
                                                     }`}>
                                                     {ticket.status}
                                                 </span>
@@ -266,7 +266,7 @@ export default function AdminDashboard() {
                                                     </h4>
                                                     <p className="text-slate-500 text-sm mt-1">From: {request.createdBy.name} ({request.department.code})</p>
                                                     <div className="flex items-center gap-2 mt-3">
-                                                        <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-blue-50 text-blue-600 border border-blue-100">
+                                                        <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-emerald-50 text-emerald-600 border border-emerald-100">
                                                             {request.type.replace('_', ' ')}
                                                         </span>
                                                         <span className="text-slate-400 text-[10px]">•</span>
@@ -275,7 +275,7 @@ export default function AdminDashboard() {
                                                 </div>
                                             </div>
                                             <div className="flex flex-col items-end gap-2">
-                                                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${request.status === "APPROVED" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"}`}>
+                                                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${request.status === "APPROVED" ? "bg-emerald-100 text-emerald-700" : "bg-green-100 text-green-700"}`}>
                                                     {request.status}
                                                 </span>
                                                 <button
@@ -283,7 +283,7 @@ export default function AdminDashboard() {
                                                         setSelectedRequest(request);
                                                         setIsProcessingModalOpen(true);
                                                     }}
-                                                    className="text-[10px] font-black text-red-600 uppercase tracking-widest hover:underline mt-2"
+                                                    className="text-[10px] font-black text-green-600 uppercase tracking-widest hover:underline mt-2"
                                                 >
                                                     Process Request
                                                 </button>
@@ -305,8 +305,8 @@ export default function AdminDashboard() {
                         <div className="space-y-6">
                             {[
                                 { label: "Success Rate", value: 98, color: "bg-green-500" },
-                                { label: "SLA Compliance", value: 94, color: "bg-blue-500" },
-                                { label: "Uptime (Global)", value: 99.9, color: "bg-purple-500" },
+                                { label: "SLA Compliance", value: 94, color: "bg-teal-500" },
+                                { label: "Uptime (Global)", value: 99.9, color: "bg-emerald-500" },
                             ].map((item, i) => (
                                 <div key={i} className="space-y-2">
                                     <div className="flex justify-between text-sm">
@@ -334,7 +334,7 @@ export default function AdminDashboard() {
                         </p>
                         <button
                             onClick={() => router.push("/tickets")}
-                            className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-semibold transition-colors relative z-10 shadow-lg shadow-red-900/20"
+                            className="w-full py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-semibold transition-colors relative z-10 shadow-lg shadow-green-900/20"
                         >
                             Respond Now
                         </button>
@@ -358,7 +358,7 @@ export default function AdminDashboard() {
                             <label className="text-[10px] font-black uppercase text-slate-400">Implementation Remarks</label>
                             <textarea
                                 rows={3}
-                                className="w-full p-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500"
+                                className="w-full p-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500"
                                 placeholder="Details about the implementation, asset numbers assigned, etc..."
                                 value={requestRemarks}
                                 onChange={(e) => setRequestRemarks(e.target.value)}
@@ -405,14 +405,14 @@ export default function AdminDashboard() {
                             <button
                                 onClick={() => handleProcessRequest("IN_PROGRESS")}
                                 disabled={processingRequest}
-                                className="py-3 bg-blue-50 text-blue-600 font-bold rounded-xl hover:bg-blue-100 disabled:opacity-50"
+                                className="py-3 bg-green-50 text-green-600 font-bold rounded-xl hover:bg-green-100 disabled:opacity-50"
                             >
                                 {processingRequest ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : "START WORK"}
                             </button>
                             <button
                                 onClick={() => handleProcessRequest("COMPLETED")}
                                 disabled={processingRequest}
-                                className="py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 disabled:opacity-50"
+                                className="py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 disabled:opacity-50"
                             >
                                 {processingRequest ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : "MARK COMPLETED"}
                             </button>

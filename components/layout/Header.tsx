@@ -82,7 +82,7 @@ export function Header() {
                     <input
                         type="text"
                         placeholder="Search resources..."
-                        className="pl-12 pr-6 py-3.5 bg-slate-50 border-none rounded-3xl text-sm w-[440px] focus:ring-2 focus:ring-blue-500 transition-all shadow-inner"
+                        className="pl-12 pr-6 py-3.5 bg-slate-50 border-none rounded-3xl text-sm w-[440px] focus:ring-2 focus:ring-green-500 transition-all shadow-inner"
                     />
                 </div>
             </div>
@@ -107,7 +107,7 @@ export function Header() {
                         <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-[32px] shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-50">
                             <div className="p-6 border-b border-slate-50 bg-slate-50/50 flex items-center justify-between">
                                 <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest">System Alerts</h3>
-                                <Link href="/notifications" onClick={() => setShowNotifications(false)} className="text-[9px] font-black text-blue-600 hover:underline uppercase tracking-widest">View History</Link>
+                                <Link href="/notifications" onClick={() => setShowNotifications(false)} className="text-[9px] font-black text-green-600 hover:underline uppercase tracking-widest">View History</Link>
                             </div>
                             <div className="max-h-96 overflow-y-auto divide-y divide-slate-50">
                                 {activities.length > 0 ? (
@@ -119,8 +119,8 @@ export function Header() {
                                             className="block p-5 hover:bg-slate-50 transition-colors"
                                         >
                                             <div className="flex gap-4">
-                                                <div className="h-8 w-8 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
-                                                    <Bell className="h-4 w-4 text-blue-600" />
+                                                <div className="h-8 w-8 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
+                                                    <Bell className="h-4 w-4 text-green-600" />
                                                 </div>
                                                 <div className="space-y-1">
                                                     <p className="text-[10px] font-black text-slate-900 uppercase leading-tight line-clamp-1">{act.entity}</p>
@@ -144,7 +144,7 @@ export function Header() {
                             <Link
                                 href="/notifications"
                                 onClick={() => setShowNotifications(false)}
-                                className="block py-4 bg-slate-900 text-white text-center text-[9px] font-black uppercase tracking-[0.2em] hover:bg-blue-600 transition-colors"
+                                className="block py-4 bg-slate-900 text-white text-center text-[9px] font-black uppercase tracking-[0.2em] hover:bg-green-600 transition-colors"
                             >
                                 Enter System Pulse
                             </Link>
@@ -158,11 +158,11 @@ export function Header() {
                 <div className="flex items-center gap-3 pl-4 border-l border-slate-100 relative" ref={profileRef}>
                     <div className="text-right">
                         <p className="text-[10px] font-black text-slate-900 uppercase tracking-tight">{session?.user?.name || "User"}</p>
-                        <p className="text-[9px] font-bold text-blue-500 uppercase tracking-widest">{session?.user?.role || "Member"}</p>
+                        <p className="text-[9px] font-bold text-green-500 uppercase tracking-widest">{session?.user?.role || "Member"}</p>
                     </div>
                     <button
                         onClick={() => setShowProfileMenu(!showProfileMenu)}
-                        className={`h-10 w-10 rounded-2xl flex items-center justify-center transition-all ${showProfileMenu ? 'bg-blue-600 rotate-180' : 'bg-slate-900 shadow-lg shadow-slate-200'
+                        className={`h-10 w-10 rounded-2xl flex items-center justify-center transition-all ${showProfileMenu ? 'bg-green-600 rotate-180' : 'bg-slate-900 shadow-lg shadow-slate-200'
                             }`}
                     >
                         <ChevronDown className="h-4 w-4 text-white" />
@@ -180,8 +180,8 @@ export function Header() {
                                     onClick={() => setShowProfileMenu(false)}
                                     className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 rounded-xl transition-colors group"
                                 >
-                                    <div className="p-2 bg-slate-100 rounded-lg group-hover:bg-blue-50 transition-colors">
-                                        <Settings className="h-3.5 w-3.5 text-slate-500 group-hover:text-blue-600" />
+                                    <div className="p-2 bg-slate-100 rounded-lg group-hover:bg-green-50 transition-colors">
+                                        <Settings className="h-3.5 w-3.5 text-slate-500 group-hover:text-green-600" />
                                     </div>
                                     <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Settings</span>
                                 </Link>

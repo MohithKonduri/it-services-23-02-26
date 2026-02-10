@@ -148,7 +148,7 @@ export default function HODDashboard() {
                 </div>
                 <button
                     onClick={() => setIsRequestModalOpen(true)}
-                    className="flex items-center gap-3 px-6 py-3.5 bg-slate-900 text-white font-bold text-sm rounded-2xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200"
+                    className="flex items-center gap-3 px-6 py-3.5 bg-green-600 text-white font-bold text-sm rounded-2xl hover:bg-green-700 transition-all shadow-lg shadow-green-100"
                 >
                     <Plus className="h-5 w-5" />
                     New Resource Request
@@ -158,7 +158,7 @@ export default function HODDashboard() {
             {/* Simplified Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
-                    { label: "Total Assets", value: stats?.totalSystems || 0, icon: Monitor, color: "text-blue-600", bg: "bg-blue-50", href: "/assets" },
+                    { label: "Total Assets", value: stats?.totalSystems || 0, icon: Monitor, color: "text-green-600", bg: "bg-green-50", href: "/assets" },
                     { label: "Pending Requests", value: stats?.pendingRequests || 0, icon: History, color: "text-orange-600", bg: "bg-orange-50", href: "/dashboard/hod#request-pipeline" },
                     { label: "Working Condition", value: `${Math.round((stats?.workingSystems / stats?.totalSystems) * 100) || 0}%`, icon: CheckCircle2, color: "text-green-600", bg: "bg-green-50" },
                 ].map((stat, i) => (
@@ -193,7 +193,7 @@ export default function HODDashboard() {
                         </div>
                         <button
                             onClick={() => setShowHistory(!showHistory)}
-                            className="text-sm font-black text-blue-600 hover:text-blue-700 flex items-center gap-2"
+                            className="text-sm font-black text-green-600 hover:text-green-700 flex items-center gap-2"
                         >
                             {showHistory ? "Pending Only" : "History"}
                             <ArrowRight className={cn("h-4 w-4 transition-transform", showHistory && "rotate-90")} />
@@ -223,7 +223,7 @@ export default function HODDashboard() {
                                                     <Clock className="h-6 w-6" />}
                                         </div>
                                         <div>
-                                            <h4 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors uppercase text-sm">{req.title}</h4>
+                                            <h4 className="font-bold text-slate-900 group-hover:text-green-600 transition-colors uppercase text-sm">{req.title}</h4>
                                             <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-1">{req.requestNumber} • {new Date(req.createdAt).toLocaleDateString()}</p>
                                         </div>
                                     </div>
@@ -246,8 +246,8 @@ export default function HODDashboard() {
                 <div id="lab-overseer" className="scroll-mt-10 space-y-8 p-10 bg-white rounded-[48px] border border-slate-100 shadow-sm">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                            <div className={cn("p-3 rounded-2xl border transition-colors", filterIssuesOnly ? "bg-orange-50 border-orange-100" : "bg-blue-50 border-blue-100")}>
-                                <LayoutGrid className={cn("h-6 w-6", filterIssuesOnly ? "text-orange-600" : "text-blue-600")} />
+                            <div className={cn("p-3 rounded-2xl border transition-colors", filterIssuesOnly ? "bg-orange-50 border-orange-100" : "bg-green-50 border-green-100")}>
+                                <LayoutGrid className={cn("h-6 w-6", filterIssuesOnly ? "text-orange-600" : "text-green-600")} />
                             </div>
                             <div>
                                 <h2 className="text-2xl font-black text-slate-900">Lab Overseer</h2>
@@ -270,7 +270,7 @@ export default function HODDashboard() {
                         {(Array.isArray(labs) ? labs : [])
                             .filter(lab => filterIssuesOnly ? (lab.status !== "Optimal" && lab.status !== "ACTIVE") : true)
                             .map((lab, i) => (
-                                <div key={lab.id} className="p-7 bg-slate-50/50 hover:bg-white rounded-[32px] border border-slate-50 hover:border-blue-100 hover:shadow-2xl hover:shadow-blue-50 transition-all flex items-center justify-between group">
+                                <div key={lab.id} className="p-7 bg-slate-50/50 hover:bg-white rounded-[32px] border border-slate-50 hover:border-green-100 hover:shadow-2xl hover:shadow-green-50 transition-all flex items-center justify-between group">
                                     <div className="flex items-center gap-6">
                                         <div className={`h-16 w-16 rounded-[24px] bg-white border border-slate-100 flex items-center justify-center font-black text-xl text-slate-900 shadow-sm`}>
                                             {String(i + 1).padStart(2, '0')}
@@ -281,12 +281,12 @@ export default function HODDashboard() {
                                         </div>
                                     </div>
                                     <div className="text-right flex flex-col items-end gap-2">
-                                        <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-blue-50 text-blue-600 border border-blue-100`}>
+                                        <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-green-50 text-green-600 border border-green-100`}>
                                             {lab.code}
                                         </div>
                                         <button
                                             onClick={() => router.push(`/assets?labId=${lab.id}`)}
-                                            className="text-[10px] font-black text-slate-300 uppercase tracking-widest hover:text-blue-500 transition-colors"
+                                            className="text-[10px] font-black text-slate-300 uppercase tracking-widest hover:text-green-500 transition-colors"
                                         >
                                             Manage Lab Assets →
                                         </button>
@@ -306,7 +306,7 @@ export default function HODDashboard() {
                                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Request Title</label>
                                 <input
                                     required
-                                    className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-green-500"
                                     placeholder="e.g., 20 New Systems for Lab 102"
                                     value={requestForm.title}
                                     onChange={e => setRequestForm({ ...requestForm, title: e.target.value })}
@@ -316,7 +316,7 @@ export default function HODDashboard() {
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Request Type</label>
                                     <select
-                                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-green-500"
                                         value={requestForm.type}
                                         onChange={e => setRequestForm({ ...requestForm, type: e.target.value })}
                                     >
@@ -330,7 +330,7 @@ export default function HODDashboard() {
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Priority</label>
                                     <select
-                                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-green-500"
                                         value={requestForm.priority}
                                         onChange={e => setRequestForm({ ...requestForm, priority: e.target.value })}
                                     >
@@ -346,7 +346,7 @@ export default function HODDashboard() {
                                 <textarea
                                     required
                                     rows={4}
-                                    className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-green-500"
                                     placeholder="Please provide specific details about the requirement..."
                                     value={requestForm.description}
                                     onChange={e => setRequestForm({ ...requestForm, description: e.target.value })}
@@ -354,7 +354,7 @@ export default function HODDashboard() {
                             </div>
                             <button
                                 disabled={submitting}
-                                className="w-full py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-slate-800 disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full py-4 bg-green-600 text-white font-black rounded-2xl hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
                                 SUBMIT OFFICIAL REQUEST
@@ -372,7 +372,7 @@ export default function HODDashboard() {
                                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Select Lab</label>
                                 <select
                                     required
-                                    className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-green-500"
                                     value={assignForm.labId}
                                     onChange={e => setAssignForm({ ...assignForm, labId: e.target.value })}
                                 >
@@ -386,7 +386,7 @@ export default function HODDashboard() {
                                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Select Incharge</label>
                                 <select
                                     required
-                                    className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-green-500"
                                     value={assignForm.inchargeId}
                                     onChange={e => setAssignForm({ ...assignForm, inchargeId: e.target.value })}
                                 >
@@ -430,11 +430,11 @@ export default function HODDashboard() {
                                 {selectedRequest.remarks && (
                                     <div className={cn(
                                         "p-6 rounded-3xl border",
-                                        selectedRequest.status === "DECLINED" ? "bg-red-50 border-red-100" : "bg-blue-50 border-blue-100"
+                                        selectedRequest.status === "DECLINED" ? "bg-red-50 border-red-100" : "bg-green-50 border-green-100"
                                     )}>
                                         <h4 className={cn(
                                             "text-[10px] font-black uppercase tracking-widest mb-2",
-                                            selectedRequest.status === "DECLINED" ? "text-red-600" : "text-blue-600"
+                                            selectedRequest.status === "DECLINED" ? "text-red-600" : "text-green-600"
                                         )}>
                                             Dean's Remarks
                                         </h4>
@@ -455,7 +455,7 @@ export default function HODDashboard() {
 
                                 <button
                                     onClick={() => setIsDetailsModalOpen(false)}
-                                    className="w-full py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-slate-800"
+                                    className="w-full py-4 bg-green-600 text-white font-black rounded-2xl hover:bg-green-700"
                                 >
                                     CLOSE DETAILS
                                 </button>

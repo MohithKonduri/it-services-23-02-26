@@ -40,7 +40,7 @@ export default function NotificationsPage() {
     const getActionColor = (action: string) => {
         switch (action?.toUpperCase()) {
             case "CREATE": return "text-green-600 bg-green-50 border-green-200";
-            case "UPDATE": return "text-blue-600 bg-blue-50 border-blue-200";
+            case "UPDATE": return "text-green-600 bg-green-50 border-green-200";
             case "DELETE": return "text-red-600 bg-red-50 border-red-200";
             case "APPROVE": return "text-emerald-600 bg-emerald-50 border-emerald-200";
             case "REJECT": return "text-rose-600 bg-rose-50 border-rose-200";
@@ -101,7 +101,7 @@ export default function NotificationsPage() {
 
             {loading ? (
                 <div className="flex flex-col items-center justify-center h-64 text-slate-400">
-                    <Loader2 className="h-8 w-8 animate-spin mb-3 text-blue-500" />
+                    <Loader2 className="h-8 w-8 animate-spin mb-3 text-green-500" />
                     <p className="text-xs font-medium uppercase tracking-wider">Loading history...</p>
                 </div>
             ) : (
@@ -111,9 +111,9 @@ export default function NotificationsPage() {
                             <div
                                 key={`${act.id}-${idx}`}
                                 onClick={() => setSelectedActivity(act)}
-                                className="group bg-white p-5 rounded-2xl border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden"
+                                className="group bg-white p-5 rounded-2xl border border-slate-200 hover:border-green-400 hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden"
                             >
-                                <div className="absolute top-0 left-0 w-1 h-full bg-transparent group-hover:bg-blue-500 transition-colors" />
+                                <div className="absolute top-0 left-0 w-1 h-full bg-transparent group-hover:bg-green-500 transition-colors" />
 
                                 <div className="flex flex-col md:flex-row md:items-center gap-6">
                                     {/* Icon & Action */}
@@ -210,7 +210,7 @@ export default function NotificationsPage() {
                                     <span className="text-xs font-semibold text-slate-500 uppercase">Actor</span>
                                 </div>
                                 <p className="text-sm font-bold text-slate-900">{selectedActivity.user?.name || "System"}</p>
-                                <p className="text-xs text-blue-600 font-medium mt-0.5">{selectedActivity.user?.role || "SYSTEM_PROCESS"}</p>
+                                <p className="text-xs text-green-600 font-medium mt-0.5">{selectedActivity.user?.role || "SYSTEM_PROCESS"}</p>
                             </div>
 
                             <div className="p-4 rounded-xl border border-slate-200">

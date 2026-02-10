@@ -47,7 +47,7 @@ export default function LabInchargeDashboard() {
     if (loading) {
         return (
             <div className="flex h-[80vh] items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
             </div>
         );
     }
@@ -56,11 +56,11 @@ export default function LabInchargeDashboard() {
         <div className="p-6 lg:p-10 space-y-10 bg-slate-50 min-h-screen">
             {/* Dynamic Lab Header */}
             <div className="bg-white p-10 rounded-[48px] border border-slate-100 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-20 -mr-20 -mt-20 bg-purple-500/5 rounded-full blur-3xl" />
+                <div className="absolute top-0 right-0 p-20 -mr-20 -mt-20 bg-green-500/5 rounded-full blur-3xl" />
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative z-10">
                     <div className="space-y-3">
                         <div className="flex items-center gap-2">
-                            <span className="p-1 px-3 bg-purple-100 text-purple-700 text-[10px] font-black uppercase tracking-widest rounded-full">CSE-LAB-301</span>
+                            <span className="p-1 px-3 bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-widest rounded-full">CSE-LAB-301</span>
                             <span className="flex h-2 w-2 rounded-full bg-green-500" />
                             <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">Live Monitoring</span>
                         </div>
@@ -68,7 +68,7 @@ export default function LabInchargeDashboard() {
                         <p className="text-slate-500 font-medium max-w-xl">Real-time oversight of computer infrastructure, licensed software deployments, and proactive maintenance tickets.</p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button className="flex items-center gap-3 px-8 py-5 bg-purple-600 text-white font-black text-sm rounded-[24px] hover:bg-purple-700 hover:shadow-2xl hover:shadow-purple-200 transition-all transform hover:-translate-y-1">
+                        <button className="flex items-center gap-3 px-8 py-5 bg-green-600 text-white font-black text-sm rounded-[24px] hover:bg-green-700 hover:shadow-2xl hover:shadow-green-200 transition-all transform hover:-translate-y-1">
                             <Plus className="h-5 w-5" />
                             REPORT SYSTEM ISSUE
                         </button>
@@ -82,12 +82,12 @@ export default function LabInchargeDashboard() {
             {/* Lab Health Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {[
-                    { label: "Lab Inventory", value: stats?.totalSystems || 0, icon: Monitor, color: "text-blue-600", bg: "bg-blue-50" },
+                    { label: "Lab Inventory", value: stats?.totalSystems || 0, icon: Monitor, color: "text-green-600", bg: "bg-green-50" },
                     { label: "Optimal Status", value: stats?.workingSystems || 0, icon: CheckCircle2, color: "text-green-600", bg: "bg-green-50" },
                     { label: "Active Requests", value: stats?.pendingTickets || 0, icon: Wrench, color: "text-orange-600", bg: "bg-orange-50" },
-                    { label: "System Health", value: "94%", icon: Zap, color: "text-purple-600", bg: "bg-purple-50" },
+                    { label: "System Health", value: "94%", icon: Zap, color: "text-emerald-600", bg: "bg-emerald-50" },
                 ].map((stat, i) => (
-                    <div key={i} className="bg-white p-8 rounded-[40px] shadow-sm border border-slate-100 group hover:border-purple-200 transition-all">
+                    <div key={i} className="bg-white p-8 rounded-[40px] shadow-sm border border-slate-100 group hover:border-green-200 transition-all">
                         <div className={`h-14 w-14 rounded-3xl ${stat.bg} flex items-center justify-center mb-6 shadow-sm`}>
                             <stat.icon className={`h-7 w-7 ${stat.color}`} />
                         </div>
@@ -128,14 +128,14 @@ export default function LabInchargeDashboard() {
                                                 <div className="flex items-center gap-3 mb-1">
                                                     <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${t.issueType === "HARDWARE"
                                                         ? "bg-red-50 text-red-600 border-red-100"
-                                                        : "bg-blue-50 text-blue-600 border-blue-100"
+                                                        : "bg-green-50 text-green-600 border-green-100"
                                                         }`}>
                                                         {t.issueType}
                                                     </span>
                                                     <span className="text-slate-300">|</span>
                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t.ticketNumber}</span>
                                                 </div>
-                                                <h4 className="text-xl font-bold text-slate-900 group-hover:text-purple-600 transition-colors">{t.title}</h4>
+                                                <h4 className="text-xl font-bold text-slate-900 group-hover:text-green-600 transition-colors">{t.title}</h4>
                                                 <div className="flex items-center gap-4 mt-3">
                                                     <span className="text-xs font-bold text-slate-500">Asset: PC-402</span>
                                                     <span className="h-1 w-1 bg-slate-200 rounded-full" />
@@ -148,8 +148,8 @@ export default function LabInchargeDashboard() {
                                                 }`}>
                                                 {t.status}
                                             </div>
-                                            <button className="p-3 bg-white border border-slate-100 rounded-full hover:border-purple-200 hover:bg-purple-50 transition-all">
-                                                <ArrowRight className="h-5 w-5 text-slate-300 group-hover:text-purple-500" />
+                                            <button className="p-3 bg-white border border-slate-100 rounded-full hover:border-green-200 hover:bg-green-50 transition-all">
+                                                <ArrowRight className="h-5 w-5 text-slate-300 group-hover:text-green-500" />
                                             </button>
                                         </div>
                                     </div>
@@ -163,32 +163,32 @@ export default function LabInchargeDashboard() {
 
                 {/* Sidebar Info */}
                 <div className="space-y-8">
-                    <div className="bg-purple-900 p-10 rounded-[48px] shadow-2xl relative overflow-hidden group">
+                    <div className="bg-emerald-900 p-10 rounded-[48px] shadow-2xl relative overflow-hidden group">
                         <div className="absolute bottom-0 right-0 p-12 -mr-16 -mb-16 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-[2000ms]" />
                         <div className="relative z-10">
                             <div className="h-16 w-16 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center mb-8">
                                 <Server className="h-8 w-8 text-white" />
                             </div>
                             <h3 className="text-2xl font-black text-white leading-tight">Infrastructure Management</h3>
-                            <p className="text-purple-300 text-sm mt-4 leading-relaxed">
+                            <p className="text-emerald-300 text-sm mt-4 leading-relaxed">
                                 Ensure all lab systems are up to date. Security patches for Windows 11 were deployed successfully.
                             </p>
                             <div className="mt-8 flex items-center gap-4">
                                 <div className="flex -space-x-3">
                                     {[1, 2, 3].map(i => (
-                                        <div key={i} className="h-10 w-10 bg-purple-700 border-2 border-purple-900 rounded-full flex items-center justify-center text-[10px] font-black text-white">
+                                        <div key={i} className="h-10 w-10 bg-emerald-700 border-2 border-emerald-900 rounded-full flex items-center justify-center text-[10px] font-black text-white">
                                             USR
                                         </div>
                                     ))}
                                 </div>
-                                <span className="text-xs font-bold text-purple-200">System Admin monitoring</span>
+                                <span className="text-xs font-bold text-emerald-200">System Admin monitoring</span>
                             </div>
                         </div>
                     </div>
 
                     <div className="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm">
                         <div className="flex items-center gap-3 mb-6">
-                            <Info className="h-5 w-5 text-blue-500" />
+                            <Info className="h-5 w-5 text-emerald-500" />
                             <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest">Lab Guidelines</h4>
                         </div>
                         <div className="space-y-4">
@@ -199,7 +199,7 @@ export default function LabInchargeDashboard() {
                                 "Maintain system logs daily."
                             ].map((guide, i) => (
                                 <div key={i} className="flex gap-4 p-4 bg-slate-50/50 rounded-2xl">
-                                    <span className="font-black text-blue-500 text-xs">0{i + 1}</span>
+                                    <span className="font-black text-emerald-500 text-xs">0{i + 1}</span>
                                     <p className="text-xs font-bold text-slate-600 leading-normal">{guide}</p>
                                 </div>
                             ))}

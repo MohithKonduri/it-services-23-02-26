@@ -20,7 +20,7 @@ export default function DashboardRedirect() {
 
     return (
         <div className="flex h-[80vh] flex-col items-center justify-center gap-4">
-            <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
+            <Loader2 className="h-12 w-12 animate-spin text-green-600" />
             <p className="text-slate-500 font-medium animate-pulse uppercase tracking-widest text-xs">
                 Redirecting to your workspace...
             </p>
