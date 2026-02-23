@@ -17,15 +17,16 @@ export async function GET(req: NextRequest) {
 
         // RBAC: HOD sees their dept labs
         if (session.user.role === "HOD") {
-            const user = await prisma.user.findUnique({ where: { id: session.user.id } });
-            if (user?.departmentId) where.departmentId = user.departmentId;
+            if (session.user.departmentId) {
+                where.departmentId = session.user.departmentId;
+            }
         }
 
         const labs = await prisma.lab.findMany({
             where,
             include: {
                 department: { select: { name: true, code: true } },
-                incharge: { select: { name: true, email: true } },
+                incharge: { select: { name: true } },
                 _count: { select: { assets: true } }
             },
             orderBy: { name: "asc" }
@@ -66,23 +67,14 @@ export async function POST(req: NextRequest) {
             }
         });
 
-        // If incharge assigned, update user's labId and departmentId
-        if (cleanInchargeId) {
-            await prisma.user.update({
-                where: { id: cleanInchargeId },
-                data: {
-                    labId: lab.id,
-                    departmentId: departmentId
-                }
-            });
-        }
+        // Note: No user labId sync here to allow multi-lab management.
 
         return NextResponse.json(lab, { status: 201 });
     } catch (error: any) {
         console.error("Error creating lab:", error);
         if (error.code === 'P2002') {
             return NextResponse.json(
-                { error: "A lab with this code already exists, or the selected Incharge is already assigned to another lab." },
+                { error: "A lab with this code already exists. Please check the deployment nomenclature." },
                 { status: 409 }
             );
         }

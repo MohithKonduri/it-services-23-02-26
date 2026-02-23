@@ -14,7 +14,6 @@ import {
     ArrowRight,
     Search,
     Monitor,
-    User,
     AlertCircle,
     Loader2,
     Wrench,
@@ -46,7 +45,6 @@ export default function DeanDashboard() {
     // Search & Modals
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<any[]>([]);
-    const [searching, setSearching] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState<any>(null);
     const [processingRequest, setProcessingRequest] = useState(false);
     const [remarks, setRemarks] = useState("");
@@ -65,10 +63,22 @@ export default function DeanDashboard() {
                 ]);
 
                 if (statsRes.ok) setStats(await statsRes.json());
-                if (requestsRes.ok) setRequests(await requestsRes.json());
-                if (distRes.ok) setDistribution(await distRes.json());
-                if (adminsRes.ok) setAdmins(await adminsRes.json());
-                if (hodsRes.ok) setHods(await hodsRes.json());
+                if (requestsRes.ok) {
+                    const data = await requestsRes.json();
+                    setRequests(Array.isArray(data) ? data : []);
+                }
+                if (distRes.ok) {
+                    const data = await distRes.json();
+                    setDistribution(Array.isArray(data) ? data : []);
+                }
+                if (adminsRes.ok) {
+                    const data = await adminsRes.json();
+                    setAdmins(Array.isArray(data) ? data : []);
+                }
+                if (hodsRes.ok) {
+                    const data = await hodsRes.json();
+                    setHods(Array.isArray(data) ? data : []);
+                }
             } catch (error) {
                 console.error("Failed to fetch dashboard data:", error);
             } finally {
@@ -80,15 +90,12 @@ export default function DeanDashboard() {
 
     const handleSearch = async () => {
         if (!searchQuery.trim()) return;
-        setSearching(true);
         try {
-            const res = await fetch(`/api/assets?search=${searchQuery}`);
+            const res = await fetch(`/api/assets?search=${searchQuery}&limit=50`);
             const data = await res.json();
-            setSearchResults(Array.isArray(data) ? data : []);
+            setSearchResults(Array.isArray(data.assets) ? data.assets : []);
         } catch (error) {
             console.error("Search failed", error);
-        } finally {
-            setSearching(false);
         }
     };
 
@@ -111,8 +118,10 @@ export default function DeanDashboard() {
                     fetch("/api/requests"),
                     fetch("/api/users?role=HOD")
                 ]);
-                setRequests(await reqsRes.json());
-                setHods(await hodsRes.json());
+                const reqsData = await reqsRes.json();
+                const hodsData = await hodsRes.json();
+                setRequests(Array.isArray(reqsData) ? reqsData : []);
+                setHods(Array.isArray(hodsData) ? hodsData : []);
                 setSelectedRequest(null);
                 setRemarks("");
                 setAssignedAdminId("");
@@ -137,8 +146,10 @@ export default function DeanDashboard() {
                     fetch("/api/users?role=HOD"),
                     fetch("/api/requests")
                 ]);
-                setHods(await hodsRes.json());
-                setRequests(await reqsRes.json());
+                const hodsData = await hodsRes.json();
+                const reqsData = await reqsRes.json();
+                setHods(Array.isArray(hodsData) ? hodsData : []);
+                setRequests(Array.isArray(reqsData) ? reqsData : []);
             } else {
                 const error = await res.json();
                 alert(error.error || "Failed to delete user");

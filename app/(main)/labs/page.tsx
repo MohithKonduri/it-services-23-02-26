@@ -71,9 +71,12 @@ function LabsContent() {
                 fetch("/api/users?role=HOD"),
                 fetch("/api/users?role=LAB_INCHARGE")
             ]);
-            setDepartments(await deptsRes.json());
-            setHods(await hodsRes.json());
-            setLabIncharges(await inchargesRes.json());
+            const deptsData = await deptsRes.json();
+            const hodsData = await hodsRes.json();
+            const inchargesData = await inchargesRes.json();
+            setDepartments(Array.isArray(deptsData) ? deptsData : []);
+            setHods(Array.isArray(hodsData) ? hodsData : []);
+            setLabIncharges(Array.isArray(inchargesData) ? inchargesData : []);
         } catch (error) {
             console.error("Failed to fetch metadata", error);
         }
@@ -83,7 +86,7 @@ function LabsContent() {
         try {
             const res = await fetch("/api/labs");
             const data = await res.json();
-            setLabs(data);
+            setLabs(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Failed to fetch labs", error);
         } finally {
@@ -215,7 +218,7 @@ function LabsContent() {
 
     const handleRequestLab = async (e: React.FormEvent) => {
         e.preventDefault();
-        const deptId = (session?.user as any)?.departmentId;
+        const deptId = session?.user?.departmentId;
         if (!deptId) {
             alert("Error: Your account is not associated with any department. Please contact the administrator.");
             return;

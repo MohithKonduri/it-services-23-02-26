@@ -12,8 +12,6 @@ import {
     AlertCircle,
     ArrowUpRight,
     Search,
-    Filter,
-    MoreVertical,
     ChevronRight,
     Loader2
 } from "lucide-react";
@@ -32,7 +30,6 @@ export default function AdminDashboard() {
     const [selectedRequest, setSelectedRequest] = useState<any>(null);
     const [processingRequest, setProcessingRequest] = useState(false);
     const [requestRemarks, setRequestRemarks] = useState("");
-    const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
     const [isProcessingModalOpen, setIsProcessingModalOpen] = useState(false);
 
     // Lab Creation Extra Fields (for LAB_SETUP type)
@@ -85,7 +82,8 @@ export default function AdminDashboard() {
 
             if (res.ok) {
                 const requestsRes = await fetch("/api/requests");
-                setRequests(await requestsRes.json());
+                const requestsData = await requestsRes.json();
+                setRequests(Array.isArray(requestsData) ? requestsData : []);
                 setIsProcessingModalOpen(false);
                 setSelectedRequest(null);
                 setRequestRemarks("");

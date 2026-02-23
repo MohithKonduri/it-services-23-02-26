@@ -74,20 +74,17 @@ export async function PUT(
             }
         });
 
-        // Sync user role/lab if incharge changed
-        if (cleanInchargeId) {
-            await prisma.user.update({
-                where: { id: cleanInchargeId },
-                data: {
-                    labId: lab.id,
-                    departmentId: lab.departmentId
-                }
-            });
-        }
+        // Note: We no longer sync user.labId here to allow one user to manage multiple labs without overwriting their primary lab association.
 
         return NextResponse.json(lab);
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error updating lab:", error);
+        if (error.code === 'P2002') {
+            return NextResponse.json(
+                { error: "A laboratory with this specific configuration code already exists." },
+                { status: 409 }
+            );
+        }
         return NextResponse.json({ error: "Failed to update lab" }, { status: 500 });
     }
 }

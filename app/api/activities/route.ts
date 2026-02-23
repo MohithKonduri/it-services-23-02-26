@@ -8,8 +8,9 @@ export async function GET(req: NextRequest) {
         const session = await getServerSession(authOptions);
         if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+        const limit = parseInt(new URL(req.url).searchParams.get("limit") || "50");
         const activities = await prisma.activityLog.findMany({
-            take: 20,
+            take: limit,
             orderBy: { createdAt: "desc" },
             include: {
                 user: { select: { name: true, role: true } }

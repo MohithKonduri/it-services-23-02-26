@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logActivity } from "@/lib/logger";
 
 export async function PATCH(
     req: NextRequest,
@@ -118,6 +119,14 @@ export async function PATCH(
                 }
             }
         }
+
+        await logActivity({
+            userId: session.user.id,
+            action: (status === "APPROVED" || status === "REJECTED") ? status : "UPDATE",
+            entity: "REQUEST",
+            entityId: id,
+            details: `Updated request ${request.requestNumber}: ${status}`
+        });
 
         return NextResponse.json(request);
     } catch (error) {

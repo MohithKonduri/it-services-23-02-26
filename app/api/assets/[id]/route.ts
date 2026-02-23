@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logActivity } from "@/lib/logger";
 
 // GET /api/assets/[id] - Get individual asset
 export async function GET(
@@ -53,6 +54,14 @@ export async function PUT(
             data: { ...body }
         });
 
+        await logActivity({
+            userId: session.user.id,
+            action: "UPDATE",
+            entity: "ASSET",
+            entityId: asset.id,
+            details: `Asset updated: ${asset.name} (${asset.assetNumber})`
+        });
+
         return NextResponse.json(asset);
     } catch (error) {
         console.error("Error updating asset:", error);
@@ -70,6 +79,17 @@ export async function DELETE(
         const session = await getServerSession(authOptions);
         if (!session || !["ADMIN", "DEAN"].includes(session.user.role)) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+        }
+
+        const asset = await prisma.asset.findUnique({ where: { id } });
+        if (asset) {
+            await logActivity({
+                userId: session.user.id,
+                action: "DELETE",
+                entity: "ASSET",
+                entityId: id,
+                details: `Asset deleted: ${asset.name} (${asset.assetNumber})`
+            });
         }
 
         await prisma.asset.delete({

@@ -6,8 +6,6 @@ import {
     User,
     Bell,
     Shield,
-    Monitor,
-    Database,
     Save,
     CheckCircle2
 } from "lucide-react";
@@ -43,8 +41,6 @@ export default function SettingsPage() {
                         { label: "Profile Information", icon: User, active: true },
                         { label: "Notifications", icon: Bell },
                         { label: "Security & Access", icon: Shield },
-                        { label: "Asset Management", icon: Monitor },
-                        { label: "Database Config", icon: Database },
                     ].map((item, i) => (
                         <button
                             key={i}

@@ -20,6 +20,8 @@ import {
 import { useSearchParams } from "next/navigation";
 import { Modal } from "@/components/ui/modal";
 import { Suspense } from "react";
+import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 export default function AssetsPage() {
     return (
@@ -28,10 +30,6 @@ export default function AssetsPage() {
         </Suspense>
     );
 }
-
-import { useSession } from "next-auth/react";
-
-// ... existing imports
 
 function AssetsContent() {
     const { data: session } = useSession();
@@ -50,7 +48,11 @@ function AssetsContent() {
     const [filterLab, setFilterLab] = useState(labIdParam || "ALL");
     const [filterStatus, setFilterStatus] = useState(statusParam || "ALL");
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const limit = 10;
 
     useEffect(() => {
         setFilterLab(labIdParam || "ALL");
@@ -61,9 +63,20 @@ function AssetsContent() {
     }, [statusParam]);
 
     useEffect(() => {
-        fetchAssets();
         fetchInitialData();
-    }, [filterType, filterLab, filterStatus]);
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setPage(1); // Reset to page 1 on new search
+            fetchAssets();
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    useEffect(() => {
+        fetchAssets();
+    }, [filterType, filterLab, filterStatus, page]);
 
     const fetchInitialData = async () => {
         try {
@@ -71,8 +84,10 @@ function AssetsContent() {
                 fetch("/api/departments"),
                 fetch("/api/labs")
             ]);
-            setDepartments(await deptsRes.json());
-            setLabs(await labsRes.json());
+            const deptsData = await deptsRes.json();
+            const labsData = await labsRes.json();
+            setDepartments(Array.isArray(deptsData) ? deptsData : []);
+            setLabs(Array.isArray(labsData) ? labsData : []);
         } catch (error) {
             console.error("Failed to fetch metadata", error);
         }
@@ -81,14 +96,17 @@ function AssetsContent() {
     const fetchAssets = async () => {
         setLoading(true);
         try {
-            let url = "/api/assets?";
+            let url = `/api/assets?page=${page}&limit=${limit}&`;
             if (filterType !== "ALL") url += `type=${filterType}&`;
             if (filterLab !== "ALL") url += `labId=${filterLab}&`;
             if (filterStatus !== "ALL") url += `status=${filterStatus}&`;
+            if (search) url += `search=${encodeURIComponent(search)}&`;
 
             const res = await fetch(url);
             const data = await res.json();
-            setAssets(Array.isArray(data) ? data : []);
+            setAssets(Array.isArray(data.assets) ? data.assets : []);
+            setTotalPages(data.totalPages || 1);
+            setTotalCount(data.total || 0);
         } catch (error) {
             console.error("Failed to fetch assets", error);
         } finally {
@@ -252,10 +270,7 @@ function AssetsContent() {
         reader.readAsText(file);
     };
 
-    const filteredAssets = assets.filter(asset =>
-        asset.name.toLowerCase().includes(search.toLowerCase()) ||
-        asset.assetNumber.toLowerCase().includes(search.toLowerCase())
-    );
+    // Server-side search used instead of client-side filter
 
     return (
         <div className="p-6 lg:p-10 space-y-8 bg-slate-50 min-h-screen">
@@ -357,7 +372,7 @@ function AssetsContent() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
-                                {filteredAssets.length > 0 ? filteredAssets.map((asset) => (
+                                {assets.length > 0 ? assets.map((asset) => (
                                     <tr key={asset.id} className="hover:bg-slate-50 transition-colors group">
                                         <td className="px-8 py-5">
                                             <div className="flex items-center gap-4">
@@ -418,12 +433,46 @@ function AssetsContent() {
 
                 {/* Pagination */}
                 <div className="bg-slate-50/50 p-6 border-t border-slate-100 flex items-center justify-between">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Showing {filteredAssets.length} of {assets.length} Assets</p>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                        Showing {Math.min(limit, assets.length)} of {totalCount} Assets • Page {page} of {totalPages}
+                    </p>
                     <div className="flex gap-2">
-                        <button className="p-2 bg-white rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-50 transition-all">
+                        <button
+                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                            disabled={page === 1}
+                            className="p-2 bg-white rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-50 transition-all cursor-pointer"
+                        >
                             <ChevronLeft className="h-4 w-4 text-slate-600" />
                         </button>
-                        <button className="p-2 bg-white rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-50 transition-all">
+                        <div className="flex items-center gap-1">
+                            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                let pageNum;
+                                if (totalPages <= 5) pageNum = i + 1;
+                                else if (page <= 3) pageNum = i + 1;
+                                else if (page >= totalPages - 2) pageNum = totalPages - 4 + i;
+                                else pageNum = page - 2 + i;
+
+                                return (
+                                    <button
+                                        key={pageNum}
+                                        onClick={() => setPage(pageNum)}
+                                        className={cn(
+                                            "w-8 h-8 rounded-lg text-xs font-bold transition-all",
+                                            page === pageNum
+                                                ? "bg-green-600 text-white"
+                                                : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                                        )}
+                                    >
+                                        {pageNum}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        <button
+                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                            disabled={page === totalPages}
+                            className="p-2 bg-white rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-50 transition-all cursor-pointer"
+                        >
                             <ChevronRight className="h-4 w-4 text-slate-600" />
                         </button>
                     </div>

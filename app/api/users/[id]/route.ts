@@ -100,18 +100,14 @@ export async function DELETE(
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        // Authorization logic
-        if (session.user.role === "ADMIN") {
-            // Admin can delete anyone (except self, checked above)
-            await prisma.user.delete({ where: { id } });
-        } else if (session.user.role === "DEAN") {
-            // Dean can only delete HODs
+        // Authorization logic: Only the Dean can manage/delete HOD accounts
+        if (session.user.role === "DEAN") {
             if (userToDelete.role !== "HOD") {
                 return NextResponse.json({ error: "Deans can only delete HOD accounts" }, { status: 403 });
             }
             await prisma.user.delete({ where: { id } });
         } else {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+            return NextResponse.json({ error: "Unauthorized: Only the Dean can manage user accounts" }, { status: 403 });
         }
 
         return NextResponse.json({ message: "User deleted successfully" });

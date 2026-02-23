@@ -45,7 +45,8 @@ export default function DepartmentsPage() {
     const fetchInitialData = async () => {
         try {
             const usersRes = await fetch("/api/users?role=HOD");
-            setHods(await usersRes.json());
+            const data = await usersRes.json();
+            setHods(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Failed to fetch HODs", error);
         }
@@ -55,7 +56,7 @@ export default function DepartmentsPage() {
         try {
             const res = await fetch("/api/departments");
             const data = await res.json();
-            setDepartments(data);
+            setDepartments(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Failed to fetch departments", error);
         } finally {

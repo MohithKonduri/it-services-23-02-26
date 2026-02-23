@@ -3,6 +3,9 @@ import bcryptjs from "bcryptjs";
 const { hash } = bcryptjs;
 import { db } from "@/lib/db";
 import { z } from "zod";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { logActivity } from "@/lib/logger";
 
 const userSchema = z.object({
     name: z.string().min(1, "Name is required"),
@@ -15,8 +18,19 @@ const userSchema = z.object({
 
 export async function POST(req: Request) {
     try {
+        const session = await getServerSession(authOptions);
         const body = await req.json();
         const { email, password, name, role, departmentId, departmentName } = userSchema.parse(body);
+
+        // RBAC: Only DEAN can register someone with a specific role
+        if (role && role !== "USER") {
+            if (!session || session.user.role !== "DEAN") {
+                return NextResponse.json(
+                    { message: "Unauthorized: Only the Dean can register specialized roles" },
+                    { status: 403 }
+                );
+            }
+        }
 
         const existingUser = await db.user.findUnique({
             where: { email: email },
@@ -73,21 +87,32 @@ export async function POST(req: Request) {
             },
         });
 
-        // If HOD or Lab Incharge, create a system request for the Dean
         if (isApprovalRequired) {
+            if (!finalDeptId) {
+                return NextResponse.json({ message: "Department is required for HOD registration" }, { status: 400 });
+            }
+
             await db.request.create({
                 data: {
                     requestNumber: `REQ-ACC-${Math.floor(1000 + Math.random() * 9000)}`,
                     title: `Account Approval: ${name} (${targetRole})`,
                     description: `A new ${targetRole} account for ${name} (${email}) is pending institutional approval. Department: ${departmentName || 'Existing Department'}.`,
-                    type: "ACCOUNT_APPROVAL" as any,
+                    type: "ACCOUNT_APPROVAL",
                     priority: "HIGH",
                     status: "PENDING",
-                    departmentId: finalDeptId as string,
+                    departmentId: finalDeptId,
                     createdById: newUser.id,
                 }
             });
         }
+
+        await logActivity({
+            userId: newUser.id,
+            action: "CREATE",
+            entity: "USER",
+            entityId: newUser.id,
+            details: `New account registered: ${name} (${email}) as ${targetRole}`
+        });
 
         // Remove password from response
         const { password: newUserPassword, ...rest } = newUser;

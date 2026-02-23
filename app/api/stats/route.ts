@@ -142,10 +142,12 @@ export async function GET(req: NextRequest) {
         if (role === "LAB_INCHARGE") {
             const user = await prisma.user.findUnique({
                 where: { id: userId },
-                select: { labId: true },
+                select: { labId: true, managedLab: { select: { id: true } } },
             });
 
-            if (!user?.labId) {
+            const labId = user?.labId || user?.managedLab?.id;
+
+            if (!labId) {
                 return NextResponse.json({ error: "No lab assigned" }, { status: 400 });
             }
 

@@ -20,6 +20,7 @@ export default function NotificationsPage() {
     const [loading, setLoading] = useState(true);
     const [selectedActivity, setSelectedActivity] = useState<any>(null);
     const [filter, setFilter] = useState("ALL");
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         fetchActivities();
@@ -40,10 +41,11 @@ export default function NotificationsPage() {
     const getActionColor = (action: string) => {
         switch (action?.toUpperCase()) {
             case "CREATE": return "text-green-600 bg-green-50 border-green-200";
-            case "UPDATE": return "text-green-600 bg-green-50 border-green-200";
+            case "UPDATE": return "text-blue-600 bg-blue-50 border-blue-200";
             case "DELETE": return "text-red-600 bg-red-50 border-red-200";
             case "APPROVE": return "text-emerald-600 bg-emerald-50 border-emerald-200";
             case "REJECT": return "text-rose-600 bg-rose-50 border-rose-200";
+            case "LOGIN": return "text-purple-600 bg-purple-50 border-purple-200";
             default: return "text-slate-600 bg-slate-50 border-slate-200";
         }
     };
@@ -81,22 +83,35 @@ export default function NotificationsPage() {
                 </div>
             </div>
 
-            {/* Filter Bar (Visual only for now) */}
-            <div className="flex items-center gap-4 overflow-x-auto pb-2">
-                {["ALL", "CREATE", "UPDATE", "DELETE", "SYSTEM"].map((f) => (
-                    <button
-                        key={f}
-                        onClick={() => setFilter(f)}
-                        className={cn(
-                            "px-4 py-2 rounded-full text-xs font-semibold transition-all whitespace-nowrap",
-                            filter === f
-                                ? "bg-slate-900 text-white shadow-md"
-                                : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-                        )}
-                    >
-                        {f}
-                    </button>
-                ))}
+            {/* Filter Bar */}
+            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+                    {["ALL", "CREATE", "UPDATE", "LOGIN"].map((f) => (
+                        <button
+                            key={f}
+                            onClick={() => setFilter(f)}
+                            className={cn(
+                                "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border",
+                                filter === f
+                                    ? "bg-slate-900 text-white border-slate-900 shadow-lg"
+                                    : "bg-white text-slate-500 border-slate-200 hover:border-green-400 hover:text-green-600"
+                            )}
+                        >
+                            {f}
+                        </button>
+                    ))}
+                </div>
+
+                <div className="relative w-full md:w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <input
+                        type="text"
+                        placeholder="Search logs..."
+                        className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-green-500 outline-none transition-all font-medium"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
             </div>
 
             {loading ? (
@@ -106,67 +121,78 @@ export default function NotificationsPage() {
                 </div>
             ) : (
                 <div className="grid gap-4 max-w-5xl">
-                    {activities.length > 0 ? (
-                        activities.map((act, idx) => (
-                            <div
-                                key={`${act.id}-${idx}`}
-                                onClick={() => setSelectedActivity(act)}
-                                className="group bg-white p-5 rounded-2xl border border-slate-200 hover:border-green-400 hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden"
-                            >
-                                <div className="absolute top-0 left-0 w-1 h-full bg-transparent group-hover:bg-green-500 transition-colors" />
+                    {(() => {
+                        const filtered = activities.filter(act => {
+                            const matchesFilter = filter === "ALL" || act.action === filter;
+                            const matchesSearch = !searchQuery ||
+                                act.details?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                act.entity?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                act.user?.name?.toLowerCase().includes(searchQuery.toLowerCase());
+                            return matchesFilter && matchesSearch;
+                        });
 
-                                <div className="flex flex-col md:flex-row md:items-center gap-6">
-                                    {/* Icon & Action */}
-                                    <div className="flex items-center gap-4 min-w-[180px]">
-                                        <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center border", getActionColor(act.action))}>
-                                            <ActivityIcon className="h-5 w-5" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
-                                                {act.action}
-                                            </p>
-                                            <p className="font-bold text-slate-900">
-                                                {act.entity === "TICKET" ? "REQUEST" : act.entity}
-                                            </p>
-                                        </div>
-                                    </div>
+                        return filtered.length > 0 ? (
+                            filtered.map((act, idx) => (
+                                <div
+                                    key={`${act.id}-${idx}`}
+                                    onClick={() => setSelectedActivity(act)}
+                                    className="group bg-white p-5 rounded-2xl border border-slate-200 hover:border-green-400 hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden"
+                                >
+                                    <div className="absolute top-0 left-0 w-1 h-full bg-transparent group-hover:bg-green-500 transition-colors" />
 
-                                    {/* Details */}
-                                    <div className="flex-1">
-                                        <p className="text-sm text-slate-600 leading-relaxed line-clamp-2 md:line-clamp-1 group-hover:text-slate-900 transition-colors">
-                                            {act.details || "System event captured successfully."}
-                                        </p>
-                                    </div>
-
-                                    {/* Metadata */}
-                                    <div className="flex items-center gap-6 md:justify-end min-w-[200px] border-t md:border-t-0 pt-4 md:pt-0 border-slate-100">
-                                        <div className="flex items-center gap-2">
-                                            <div className="h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-600">
-                                                {act.user?.name?.charAt(0) || "S"}
+                                    <div className="flex flex-col md:flex-row md:items-center gap-6">
+                                        {/* Icon & Action */}
+                                        <div className="flex items-center gap-4 min-w-[180px]">
+                                            <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center border", getActionColor(act.action))}>
+                                                <ActivityIcon className="h-5 w-5" />
                                             </div>
-                                            <span className="text-xs font-medium text-slate-600 truncate max-w-[100px]">
-                                                {act.user?.name || "System"}
-                                            </span>
+                                            <div>
+                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                    {act.action}
+                                                </p>
+                                                <p className="font-bold text-slate-900">
+                                                    {act.entity === "TICKET" ? "REQUEST" : act.entity}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center gap-2 text-slate-400">
-                                            <Clock className="h-3.5 w-3.5" />
-                                            <span className="text-xs font-medium whitespace-nowrap">
-                                                {formatDate(act.createdAt)}
-                                            </span>
+
+                                        {/* Details */}
+                                        <div className="flex-1">
+                                            <p className="text-sm text-slate-600 leading-relaxed line-clamp-2 md:line-clamp-1 group-hover:text-slate-900 transition-colors">
+                                                {act.details || "System event captured successfully."}
+                                            </p>
+                                        </div>
+
+                                        {/* Metadata */}
+                                        <div className="flex items-center gap-6 md:justify-end min-w-[200px] border-t md:border-t-0 pt-4 md:pt-0 border-slate-100">
+                                            <div className="flex items-center gap-2">
+                                                <div className="h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-600">
+                                                    {act.user?.name?.charAt(0) || "S"}
+                                                </div>
+                                                <span className="text-xs font-medium text-slate-600 truncate max-w-[100px]">
+                                                    {act.user?.name || "System"}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-slate-400">
+                                                <Clock className="h-3.5 w-3.5" />
+                                                <span className="text-xs font-medium whitespace-nowrap">
+                                                    {formatDate(act.createdAt)}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            ))
+                        ) : (
+                            <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-300">
+                                <div className="inline-flex p-4 bg-slate-50 rounded-full mb-4">
+                                    <Search className="h-6 w-6 text-slate-400" />
+                                </div>
+                                <h3 className="text-lg font-semibold text-slate-900">No logs found</h3>
+                                <p className="text-slate-500 text-sm mt-1">Try adjusting your filters or search query.</p>
                             </div>
-                        ))
-                    ) : (
-                        <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-300">
-                            <div className="inline-flex p-4 bg-slate-50 rounded-full mb-4">
-                                <Search className="h-6 w-6 text-slate-400" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-slate-900">No logs found</h3>
-                            <p className="text-slate-500 text-sm mt-1">Activity history is currently empty.</p>
-                        </div>
-                    )}
+                        );
+                    })()}
                 </div>
             )}
 

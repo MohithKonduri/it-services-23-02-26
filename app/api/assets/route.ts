@@ -15,12 +15,20 @@ export async function GET(req: NextRequest) {
         const status = searchParams.get("status");
         const labId = searchParams.get("labId");
         const deptId = searchParams.get("deptId");
+        const search = searchParams.get("search");
 
         const where: any = {};
         if (type) where.type = type;
         if (status) where.status = status;
         if (labId) where.labId = labId;
         if (deptId) where.departmentId = deptId;
+        if (search) {
+            where.OR = [
+                { name: { contains: search } },
+                { assetNumber: { contains: search } },
+                { macAddress: { contains: search } },
+            ];
+        }
 
         // RBAC: HOD sees their dept, Lab Incharge sees their lab
         if (session.user.role === "HOD") {
@@ -31,16 +39,31 @@ export async function GET(req: NextRequest) {
             if (user?.labId) where.labId = user.labId;
         }
 
-        const assets = await prisma.asset.findMany({
-            where,
-            include: {
-                department: { select: { name: true, code: true } },
-                lab: { select: { name: true, code: true } },
-            },
-            orderBy: { updatedAt: "desc" },
-        });
+        const page = parseInt(searchParams.get("page") || "1");
+        const limit = parseInt(searchParams.get("limit") || "10");
+        const skip = (page - 1) * limit;
 
-        return NextResponse.json(assets);
+        const [assets, total] = await Promise.all([
+            prisma.asset.findMany({
+                where,
+                include: {
+                    department: { select: { name: true, code: true } },
+                    lab: { select: { name: true, code: true } },
+                },
+                orderBy: { updatedAt: "desc" },
+                skip,
+                take: limit,
+            }),
+            prisma.asset.count({ where })
+        ]);
+
+        return NextResponse.json({
+            assets,
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit)
+        });
     } catch (error) {
         console.error("Error fetching assets:", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -71,8 +94,11 @@ export async function POST(req: NextRequest) {
         });
 
         return NextResponse.json(asset, { status: 201 });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error creating asset:", error);
+        if (error.code === 'P2002') {
+            return NextResponse.json({ error: "An asset with this System Code already exists." }, { status: 409 });
+        }
         return NextResponse.json({ error: "Failed to create asset" }, { status: 500 });
     }
 }

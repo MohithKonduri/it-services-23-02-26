@@ -36,8 +36,6 @@ export async function GET(req: NextRequest) {
                 departmentId: true,
                 labId: true,
                 createdAt: true,
-                department: { select: { name: true, code: true } },
-                lab: { select: { name: true } }
             },
             orderBy: { createdAt: "desc" }
         });

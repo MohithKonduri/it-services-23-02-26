@@ -113,7 +113,7 @@ export default function UsersPage() {
                     <h1 className="text-3xl font-black text-slate-900 tracking-tight">Department Heads</h1>
                     <p className="text-slate-500 font-medium">Directory of institutional department leadership</p>
                 </div>
-                {session?.user?.role !== "DEAN" && (
+                {session?.user?.role === "DEAN" && (
                     <button
                         onClick={() => setIsAddModalOpen(true)}
                         className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-black text-sm rounded-2xl hover:bg-green-700 shadow-xl shadow-green-200 transition-all"
@@ -152,7 +152,7 @@ export default function UsersPage() {
                                     <th className="px-6 py-5">Role & Security</th>
                                     <th className="px-6 py-5">Department</th>
                                     <th className="px-6 py-5">Status</th>
-                                    <th className="px-8 py-5 text-right">Actions</th>
+                                    {session?.user?.role === "DEAN" && <th className="px-8 py-5 text-right">Actions</th>}
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
@@ -185,26 +185,28 @@ export default function UsersPage() {
                                                 <span className="text-xs font-bold text-slate-500 uppercase">Active</span>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6 text-right relative">
-                                            <button
-                                                onClick={() => setShowOptionsId(showOptionsId === user.id ? null : user.id)}
-                                                className="p-2 hover:bg-white rounded-lg border border-transparent hover:border-slate-200 transition-all"
-                                            >
-                                                <MoreVertical className="h-4 w-4 text-slate-400" />
-                                            </button>
-                                            {showOptionsId === user.id && (
-                                                <div className="absolute right-10 top-12 w-48 bg-white rounded-xl shadow-xl border border-slate-100 z-10 overflow-hidden">
-                                                    <button
-                                                        onClick={() => handleDeleteUser(user.id)}
-                                                        disabled={deletingId === user.id}
-                                                        className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 text-xs font-bold uppercase tracking-widest flex items-center gap-2"
-                                                    >
-                                                        {deletingId === user.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
-                                                        Delete Account
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </td>
+                                        {session?.user?.role === "DEAN" && (
+                                            <td className="px-8 py-6 text-right relative">
+                                                <button
+                                                    onClick={() => setShowOptionsId(showOptionsId === user.id ? null : user.id)}
+                                                    className="p-2 hover:bg-white rounded-lg border border-transparent hover:border-slate-200 transition-all"
+                                                >
+                                                    <MoreVertical className="h-4 w-4 text-slate-400" />
+                                                </button>
+                                                {showOptionsId === user.id && (
+                                                    <div className="absolute right-10 top-12 w-48 bg-white rounded-xl shadow-xl border border-slate-100 z-10 overflow-hidden">
+                                                        <button
+                                                            onClick={() => handleDeleteUser(user.id)}
+                                                            disabled={deletingId === user.id}
+                                                            className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 text-xs font-bold uppercase tracking-widest flex items-center gap-2"
+                                                        >
+                                                            {deletingId === user.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
+                                                            Delete Account
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </td>
+                                        )}
                                     </tr>
                                 ))}
                             </tbody>

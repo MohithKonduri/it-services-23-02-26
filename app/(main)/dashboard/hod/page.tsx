@@ -13,7 +13,6 @@ import {
     ArrowRight,
     ClipboardList,
     ChevronRight,
-    Search,
     Loader2
 } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -30,13 +29,11 @@ export default function HODDashboard() {
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showHistory, setShowHistory] = useState(false);
-    const [filterIssuesOnly, setFilterIssuesOnly] = useState(false);
 
     // Modals
     const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
     const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-    const [selectedLab, setSelectedLab] = useState<any>(null);
     const [selectedRequest, setSelectedRequest] = useState<any>(null);
 
     // Form States
@@ -54,10 +51,14 @@ export default function HODDashboard() {
                     fetch("/api/users?role=LAB_INCHARGE")
                 ]);
 
-                setStats(await statsRes.json());
-                setRequests(await requestsRes.json());
-                setLabs(await labsRes.json());
-                setUsers(await usersRes.json());
+                const statsData = await statsRes.json();
+                const requestsData = await requestsRes.json();
+                const labsData = await labsRes.json();
+                const usersData = await usersRes.json();
+                setStats(statsData);
+                setRequests(Array.isArray(requestsData) ? requestsData : []);
+                setLabs(Array.isArray(labsData) ? labsData : []);
+                setUsers(Array.isArray(usersData) ? usersData : []);
             } catch (error) {
                 console.error("Failed to fetch HOD data:", error);
             } finally {
@@ -70,7 +71,7 @@ export default function HODDashboard() {
     const handleRaiseRequest = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const deptId = (session?.user as any)?.departmentId;
+        const deptId = session?.user?.departmentId;
         if (!deptId) {
             alert("Error: Your account is not associated with any department. Please contact the administrator.");
             return;
@@ -93,7 +94,8 @@ export default function HODDashboard() {
                 setRequestForm({ title: "", description: "", type: "NEW_SYSTEM", priority: "NORMAL" });
                 // Refresh requests
                 const requestsRes = await fetch("/api/requests");
-                setRequests(await requestsRes.json());
+                const requestsData = await requestsRes.json();
+                setRequests(Array.isArray(requestsData) ? requestsData : []);
                 alert(`Success! Request ${data.requestNumber} has been raised.`);
             } else {
                 const errorData = await res.json();
@@ -121,7 +123,8 @@ export default function HODDashboard() {
                 setAssignForm({ labId: "", inchargeId: "" });
                 // Refresh labs
                 const labsRes = await fetch("/api/labs");
-                setLabs(await labsRes.json());
+                const labsData = await labsRes.json();
+                setLabs(Array.isArray(labsData) ? labsData : []);
             }
         } catch (error) {
             console.error("Failed to assign incharge", error);
@@ -246,12 +249,11 @@ export default function HODDashboard() {
                 <div id="lab-overseer" className="scroll-mt-10 space-y-8 p-10 bg-white rounded-[48px] border border-slate-100 shadow-sm">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                            <div className={cn("p-3 rounded-2xl border transition-colors", filterIssuesOnly ? "bg-orange-50 border-orange-100" : "bg-green-50 border-green-100")}>
-                                <LayoutGrid className={cn("h-6 w-6", filterIssuesOnly ? "text-orange-600" : "text-green-600")} />
+                            <div className="p-3 rounded-2xl border transition-colors bg-green-50 border-green-100">
+                                <LayoutGrid className="h-6 w-6 text-green-600" />
                             </div>
                             <div>
                                 <h2 className="text-2xl font-black text-slate-900">Lab Overseer</h2>
-                                {filterIssuesOnly && <p className="text-[10px] font-bold text-orange-600 uppercase tracking-widest">Showing Issues Only</p>}
                             </div>
                         </div>
                         <button
@@ -268,7 +270,6 @@ export default function HODDashboard() {
 
                     <div className="grid grid-cols-1 gap-6">
                         {(Array.isArray(labs) ? labs : [])
-                            .filter(lab => filterIssuesOnly ? (lab.status !== "Optimal" && lab.status !== "ACTIVE") : true)
                             .map((lab, i) => (
                                 <div key={lab.id} className="p-7 bg-slate-50/50 hover:bg-white rounded-[32px] border border-slate-50 hover:border-green-100 hover:shadow-2xl hover:shadow-green-50 transition-all flex items-center justify-between group">
                                     <div className="flex items-center gap-6">

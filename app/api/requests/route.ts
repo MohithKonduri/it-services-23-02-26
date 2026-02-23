@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { logActivity } from "@/lib/logger";
 
 // GET /api/requests - Get requests based on role
 export async function GET(req: NextRequest) {
@@ -126,6 +127,14 @@ export async function POST(req: NextRequest) {
                     select: { name: true, code: true },
                 },
             },
+        });
+
+        await logActivity({
+            userId: session.user.id,
+            action: "CREATE",
+            entity: "REQUEST",
+            entityId: request.id,
+            details: `Created resource request: ${request.title} (${request.requestNumber})`
         });
 
         return NextResponse.json(request, { status: 201 });
