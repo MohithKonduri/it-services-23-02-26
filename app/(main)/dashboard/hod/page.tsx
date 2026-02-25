@@ -138,7 +138,7 @@ export default function HODDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
                     { label: "Total Assets", value: stats?.totalSystems || 0, change: "Managed", icon: Monitor, color: "text-blue-600", bg: "bg-blue-50", href: "/assets" },
-                    { label: "Pending Requests", value: stats?.pendingRequests || 0, change: "Action Needed", icon: History, color: "text-orange-500", bg: "bg-orange-50", href: "/dashboard/hod#request-pipeline" },
+                    { label: "Active Requests", value: stats?.activeRequests || 0, change: "Operational", icon: History, color: "text-orange-500", bg: "bg-orange-50", href: "/dashboard/hod#request-pipeline" },
                     { label: "Working Condition", value: `${Math.round((stats?.workingSystems / stats?.totalSystems) * 100) || 0}%`, change: "Optimal", icon: CheckCircle2, color: "text-blue-600", bg: "bg-blue-50" },
                 ].map((stat, i) => (
                     <div
@@ -178,14 +178,14 @@ export default function HODDashboard() {
                             onClick={() => setShowHistory(!showHistory)}
                             className="text-sm font-black text-green-600 hover:text-green-700 flex items-center gap-2"
                         >
-                            {showHistory ? "Pending Only" : "History"}
+                            {showHistory ? "Active Only" : "History"}
                             <ArrowRight className={cn("h-4 w-4 transition-transform", showHistory && "rotate-90")} />
                         </button>
                     </div>
 
                     <div className="space-y-4">
                         {(Array.isArray(requests) ? requests : [])
-                            .filter(r => showHistory ? true : r.status === "PENDING")
+                            .filter(r => showHistory ? true : ["PENDING", "APPROVED", "ASSIGNED", "IN_PROGRESS"].includes(r.status))
                             .slice(0, 5)
                             .map((req, index) => (
                                 <div
@@ -222,8 +222,8 @@ export default function HODDashboard() {
                                     </div>
                                 </div>
                             ))}
-                        {requests.filter(r => showHistory ? true : r.status === "PENDING").length === 0 && (
-                            <div className="p-12 text-center text-slate-400 italic font-medium">No {showHistory ? "" : "pending"} requests in pipeline</div>
+                        {requests.filter(r => showHistory ? true : ["PENDING", "APPROVED", "ASSIGNED", "IN_PROGRESS"].includes(r.status)).length === 0 && (
+                            <div className="p-12 text-center text-slate-400 italic font-medium">No {showHistory ? "" : "active"} requests in pipeline</div>
                         )}
                     </div>
                 </div>

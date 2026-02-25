@@ -90,14 +90,19 @@ export async function GET(req: NextRequest) {
                 totalSystems,
                 workingSystems,
                 underMaintenance,
-                myRequests,
+                activeRequests,
                 pendingRequests,
                 approvedRequests,
             ] = await Promise.all([
                 prisma.asset.count({ where: { departmentId: user.departmentId } }),
                 prisma.asset.count({ where: { departmentId: user.departmentId, status: "ACTIVE" } }),
                 prisma.asset.count({ where: { departmentId: user.departmentId, status: "UNDER_MAINTENANCE" } }),
-                prisma.request.count({ where: { createdById: userId } }),
+                prisma.request.count({
+                    where: {
+                        createdById: userId,
+                        status: { in: ["PENDING", "APPROVED", "ASSIGNED", "IN_PROGRESS"] }
+                    }
+                }),
                 prisma.request.count({ where: { createdById: userId, status: "PENDING" } }),
                 prisma.request.count({ where: { createdById: userId, status: "APPROVED" } }),
             ]);
@@ -106,7 +111,7 @@ export async function GET(req: NextRequest) {
                 totalSystems,
                 workingSystems,
                 underMaintenance,
-                myRequests,
+                activeRequests,
                 pendingRequests,
                 approvedRequests,
             });

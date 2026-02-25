@@ -6,6 +6,9 @@ export default withAuth(
         const token = req.nextauth.token;
         const path = req.nextUrl.pathname;
 
+        // Skip middleware for API routes just to be safe
+        if (path.startsWith("/api")) return NextResponse.next();
+
         // Role-based access control
         const roleAccess: Record<string, string[]> = {
             "/dashboard/dean": ["DEAN"],
@@ -37,5 +40,18 @@ export default withAuth(
 );
 
 export const config = {
-    matcher: ["/dashboard/:path*", "/(main)/:path*"],
+    // Better matcher: match all dashboard routes and main routes, 
+    // but explicitly excluding internal next and api routes if they were somehow caught
+    matcher: [
+        "/dashboard/:path*",
+        "/assets/:path*",
+        "/departments/:path*",
+        "/labs/:path*",
+        "/notifications/:path*",
+        "/settings/:path*",
+        "/tickets/:path*",
+        "/users/:path*"
+    ],
 };
+
+
