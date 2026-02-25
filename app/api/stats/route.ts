@@ -17,36 +17,57 @@ export async function GET(req: NextRequest) {
 
         // Dean - Global stats
         if (role === "DEAN") {
+            let totalSystems = 0;
+            let readyForUse = 0;
+            let service = 0;
+            let priorityTasks = 0;
+
+            try {
+                // Fetch stats from Google Sheets 
+                // Using the ID found in test-sheet configuration
+                const sheetRes = await fetch("https://docs.google.com/spreadsheets/d/1nCYkK0Y5RGmjHG2X1CyC-ENAVgmufzDxp97fJWC1jTs/export?format=csv", { cache: 'no-store' });
+                const text = await sheetRes.text();
+                
+                if (!text.toLowerCase().includes("<!doctype html>")) {
+                    const lines = text.split("\n").map(l => l.trim()).filter(l => l !== "");
+                    // Assumes row 1 is headers and row 2 has the actual data
+                    if (lines.length > 1) {
+                        // Data row: totalSystems, readyForUse, service, priorityTasks
+                        const values = lines[1].split(",");
+                        totalSystems = parseInt(values[0]) || 0;
+                        readyForUse = parseInt(values[1]) || 0;
+                        service = parseInt(values[2]) || 0;
+                        priorityTasks = parseInt(values[3]) || 0;
+                    } else if (lines.length === 1) {
+                        // Fallback if no header row exists
+                        const values = lines[0].split(",");
+                        totalSystems = parseInt(values[0]) || 0;
+                        readyForUse = parseInt(values[1]) || 0;
+                        service = parseInt(values[2]) || 0;
+                        priorityTasks = parseInt(values[3]) || 0;
+                    }
+                } else {
+                    console.error("Google Sheet returned HTML. Ensure the sheet is published as 'Anyone with the link can view'.");
+                }
+            } catch (error) {
+                console.error("Error fetching from Google Sheets:", error);
+            }
+
             const [
-                totalSystemsCount,
-                workingSystems,
-                underMaintenanceCount,
-                damagedCount,
-                openMaintenanceTickets,
                 departments,
                 labs,
                 pendingRequests,
             ] = await Promise.all([
-                prisma.asset.count({ where: { type: { in: ["DESKTOP", "LAPTOP", "SERVER"] } } }),
-                prisma.asset.count({ where: { status: "ACTIVE", type: { in: ["DESKTOP", "LAPTOP", "SERVER"] } } }),
-                prisma.asset.count({ where: { status: "UNDER_MAINTENANCE", type: { in: ["DESKTOP", "LAPTOP", "SERVER"] } } }),
-                prisma.asset.count({ where: { status: "DAMAGED", type: { in: ["DESKTOP", "LAPTOP", "SERVER"] } } }),
-                prisma.ticket.count({ where: { status: { not: "RESOLVED" } } }),
                 prisma.department.count(),
                 prisma.lab.count(),
                 prisma.request.count({ where: { status: "PENDING" } }),
             ]);
 
-            // Balanced calculation: Ready + Service = Total
-            const serviceCount = underMaintenanceCount + damagedCount;
-            const readyCount = workingSystems;
-            const priorityCount = openMaintenanceTickets + pendingRequests;
-
             return NextResponse.json({
-                totalSystems: totalSystemsCount,
-                readyForUse: readyCount,
-                service: serviceCount,
-                priorityTasks: priorityCount,
+                totalSystems,
+                readyForUse,
+                service,
+                priorityTasks,
                 departments,
                 labs,
                 pendingRequests,
