@@ -103,20 +103,43 @@ export default function TicketsPage() {
         }
     };
 
-    const updateStatus = async (id: string, currentStatus: string) => {
-        let nextStatus = "PROCESSING";
-        if (currentStatus === "PROCESSING") nextStatus = "RESOLVED";
+    const updateStatus = async (item: any, unifiedStatus: string) => {
+        const id = item.id;
+        const isRequest = item.type === 'RESOURCE_REQUEST';
+
+        // Map unified UI status to database-specific enums
+        let finalStatus = unifiedStatus;
+        if (isRequest) {
+            if (unifiedStatus === "PENDING") finalStatus = "PENDING";
+            if (unifiedStatus === "IN_PROCESS") finalStatus = "IN_PROGRESS";
+            if (unifiedStatus === "COMPLETED") finalStatus = "COMPLETED";
+            if (unifiedStatus === "CLOSED") finalStatus = "DECLINED";
+        } else {
+            if (unifiedStatus === "PENDING") finalStatus = "SUBMITTED";
+            if (unifiedStatus === "IN_PROCESS") finalStatus = "PROCESSING";
+            if (unifiedStatus === "COMPLETED") finalStatus = "RESOLVED";
+            if (unifiedStatus === "CLOSED") finalStatus = "CLOSED";
+        }
 
         try {
-            await fetch(`/api/tickets/${id}`, {
+            const endpoint = isRequest ? `/api/requests/${id}` : `/api/tickets/${id}`;
+            await fetch(endpoint, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: nextStatus })
+                body: JSON.stringify({ status: finalStatus })
             });
             fetchAllData();
         } catch (error) {
-            console.error("Failed to update ticket", error);
+            console.error("Failed to update item", error);
         }
+    };
+
+    const getUnifiedStatus = (status: string) => {
+        if (status === "SUBMITTED" || status === "PENDING") return "PENDING";
+        if (status === "PROCESSING" || status === "QUEUED" || status === "ASSIGNED" || status === "IN_PROGRESS" || status === "IN_PROCESS") return "IN_PROCESS";
+        if (status === "RESOLVED" || status === "DEPLOYED" || status === "COMPLETED") return "COMPLETED";
+        if (status === "CLOSED" || status === "DECLINED") return "CLOSED";
+        return status;
     };
 
     const safeTickets = Array.isArray(tickets) ? tickets : [];
@@ -246,6 +269,12 @@ export default function TicketsPage() {
                                                         </span>
                                                         <span className="text-slate-300">•</span>
                                                         <span className="text-[10px] font-black text-slate-400 tracking-widest uppercase">{item.type === 'RESOURCE_REQUEST' ? item.requestNumber : item.ticketNumber}</span>
+                                                        {item.type === 'RESOURCE_REQUEST' && (
+                                                            <>
+                                                                <span className="text-slate-300">•</span>
+                                                                <span className="text-[10px] font-black text-blue-500 tracking-widest uppercase">Approved Request</span>
+                                                            </>
+                                                        )}
                                                     </div>
                                                     <h4 className="text-lg font-bold text-slate-900 group-hover:text-green-600 transition-colors uppercase tracking-tight">{item.title}</h4>
                                                     <p className="text-slate-500 text-sm mt-1 line-clamp-1">{item.description}</p>
@@ -268,13 +297,20 @@ export default function TicketsPage() {
                                                         }`}>
                                                         {item.status}
                                                     </span>
-                                                    {session?.user?.role === "ADMIN" && item.type === 'TICKET' && item.status !== "RESOLVED" && (
-                                                        <button
-                                                            onClick={() => updateStatus(item.id, item.status)}
-                                                            className="text-[10px] font-black text-green-600 hover:text-green-700 uppercase tracking-widest flex items-center justify-center gap-1"
+                                                    {session?.user?.role === "ADMIN" && (
+                                                        <select
+                                                            value={getUnifiedStatus(item.status)}
+                                                            onChange={(e) => updateStatus(item, e.target.value)}
+                                                            disabled={item.status === "COMPLETED" || item.status === "RESOLVED" || item.status === "CLOSED" || item.status === "DECLINED"}
+                                                            className={`text-[10px] font-black border rounded-lg px-2 py-1.5 uppercase tracking-widest outline-none transition-all ${item.status === "COMPLETED" || item.status === "RESOLVED"
+                                                                ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                                                                : "text-green-600 bg-white border-green-100 focus:ring-2 focus:ring-green-500 cursor-pointer hover:border-green-300"
+                                                                }`}
                                                         >
-                                                            UPDATE STATUS <ArrowRight className="h-3 w-3" />
-                                                        </button>
+                                                            <option value="APPROVED">Approved</option>
+                                                            <option value="IN_PROCESS">In Process</option>
+                                                            <option value="COMPLETED">Completed</option>
+                                                        </select>
                                                     )}
                                                 </div>
                                             </div>
