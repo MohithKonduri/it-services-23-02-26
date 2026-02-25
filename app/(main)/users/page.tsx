@@ -103,15 +103,21 @@ export default function UsersPage() {
     const filteredUsers = users.filter(user =>
         (user.name?.toLowerCase().includes(search.toLowerCase()) ||
             user.email?.toLowerCase().includes(search.toLowerCase())) &&
-        user.role === "HOD"
+        (session?.user?.role === "HOD" ? user.role === "LAB_INCHARGE" : user.role === "HOD")
     );
 
     return (
         <div className="p-6 lg:p-10 space-y-8 bg-slate-50 min-h-screen">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Department Heads</h1>
-                    <p className="text-slate-500 font-medium">Directory of institutional department leadership</p>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                        {session?.user?.role === "HOD" ? "Lab Incharges" : "Department Heads"}
+                    </h1>
+                    <p className="text-slate-500 font-medium">
+                        {session?.user?.role === "HOD"
+                            ? "Directory of departmental laboratory leadership"
+                            : "Directory of institutional department leadership"}
+                    </p>
                 </div>
                 {session?.user?.role === "DEAN" && (
                     <button
