@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
                 // Using the ID found in test-sheet configuration
                 const sheetRes = await fetch("https://docs.google.com/spreadsheets/d/1nCYkK0Y5RGmjHG2X1CyC-ENAVgmufzDxp97fJWC1jTs/export?format=csv", { cache: 'no-store' });
                 const text = await sheetRes.text();
-                
+
                 if (!text.toLowerCase().includes("<!doctype html>")) {
                     const lines = text.split("\n").map(l => l.trim()).filter(l => l !== "");
                     // Assumes row 1 is headers and row 2 has the actual data
@@ -99,12 +99,12 @@ export async function GET(req: NextRequest) {
                 prisma.asset.count({ where: { departmentId: user.departmentId, status: "UNDER_MAINTENANCE" } }),
                 prisma.request.count({
                     where: {
-                        createdById: userId,
+                        departmentId: user.departmentId,
                         status: { in: ["PENDING", "APPROVED", "ASSIGNED", "IN_PROGRESS"] }
                     }
                 }),
-                prisma.request.count({ where: { createdById: userId, status: "PENDING" } }),
-                prisma.request.count({ where: { createdById: userId, status: "APPROVED" } }),
+                prisma.request.count({ where: { departmentId: user.departmentId, status: "PENDING" } }),
+                prisma.request.count({ where: { departmentId: user.departmentId, status: "APPROVED" } }),
             ]);
 
             return NextResponse.json({

@@ -19,6 +19,7 @@ import { Modal } from "@/components/ui/modal";
 export default function TicketsPage() {
     const { data: session } = useSession();
     const [tickets, setTickets] = useState<any[]>([]);
+    const [resourceRequests, setResourceRequests] = useState<any[]>([]);
     const [assets, setAssets] = useState<any[]>([]);
     const [departments, setDepartments] = useState<any[]>([]);
     const [labs, setLabs] = useState<any[]>([]);
@@ -29,9 +30,27 @@ export default function TicketsPage() {
     const [selectedAssetId, setSelectedAssetId] = useState("");
 
     useEffect(() => {
-        fetchTickets();
+        fetchAllData();
         fetchInitialData();
     }, []);
+
+    const fetchAllData = async () => {
+        setLoading(true);
+        try {
+            const [ticketsRes, requestsRes] = await Promise.all([
+                fetch("/api/tickets"),
+                fetch("/api/requests")
+            ]);
+            const ticketsData = await ticketsRes.json();
+            const requestsData = await requestsRes.json();
+            setTickets(Array.isArray(ticketsData) ? ticketsData : []);
+            setResourceRequests(Array.isArray(requestsData) ? requestsData : []);
+        } catch (error) {
+            console.error("Failed to fetch data", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const fetchInitialData = async () => {
         try {
@@ -49,19 +68,6 @@ export default function TicketsPage() {
             setLabs(Array.isArray(labsData) ? labsData : []);
         } catch (error) {
             console.error("Failed to fetch metadata", error);
-        }
-    };
-
-    const fetchTickets = async () => {
-        try {
-            const res = await fetch("/api/tickets");
-            const data = await res.json();
-            setTickets(Array.isArray(data) ? data : []);
-        } catch (error) {
-            console.error("Failed to fetch tickets", error);
-            setTickets([]);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -87,7 +93,7 @@ export default function TicketsPage() {
             });
             if (res.ok) {
                 setShowCreateModal(false);
-                fetchTickets();
+                fetchAllData();
                 setSelectedAssetId("");
             }
         } catch (error) {
@@ -107,18 +113,48 @@ export default function TicketsPage() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: nextStatus })
             });
-            fetchTickets();
+            fetchAllData();
         } catch (error) {
             console.error("Failed to update ticket", error);
         }
     };
 
     const safeTickets = Array.isArray(tickets) ? tickets : [];
+    const safeRequests = Array.isArray(resourceRequests) ? resourceRequests : [];
+
+    // Unified helper for counts
+    const getCounts = () => {
+        const newOpen =
+            safeTickets.filter(t => ["SUBMITTED", "APPROVED", "QUEUED"].includes(t.status)).length +
+            safeRequests.filter(r => ["PENDING", "APPROVED", "ASSIGNED"].includes(r.status)).length;
+
+        const inProgress =
+            safeTickets.filter(t => t.status === "PROCESSING").length +
+            safeRequests.filter(r => r.status === "IN_PROGRESS").length;
+
+        const resolved =
+            safeTickets.filter(t => ["RESOLVED", "DEPLOYED"].includes(t.status)).length +
+            safeRequests.filter(r => r.status === "COMPLETED").length;
+
+        return { newOpen, inProgress, resolved };
+    };
+
+    const counts = getCounts();
 
     const filteredTickets = safeTickets.filter(t =>
         t.title.toLowerCase().includes(search.toLowerCase()) ||
         t.ticketNumber.toLowerCase().includes(search.toLowerCase())
     );
+
+    const filteredRequests = safeRequests.filter(r =>
+        r.title.toLowerCase().includes(search.toLowerCase()) ||
+        r.requestNumber.toLowerCase().includes(search.toLowerCase())
+    );
+
+    const allItems = [
+        ...filteredTickets.map(t => ({ ...t, type: 'TICKET' })),
+        ...filteredRequests.map(r => ({ ...r, type: 'RESOURCE_REQUEST' }))
+    ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     return (
         <div className="p-6 lg:p-10 space-y-8 bg-slate-50 min-h-screen">
@@ -142,9 +178,9 @@ export default function TicketsPage() {
                 {/* Status Bubbles */}
                 <div className="xl:col-span-1 space-y-4">
                     {[
-                        { label: "New & Open", count: safeTickets.filter(t => t.status === "SUBMITTED").length, color: "text-emerald-600", bg: "bg-emerald-50" },
-                        { label: "In Progress", count: safeTickets.filter(t => t.status === "PROCESSING").length, color: "text-orange-600", bg: "bg-orange-50" },
-                        { label: "Resolved", count: safeTickets.filter(t => t.status === "RESOLVED" || t.status === "DEPLOYED").length, color: "text-green-600", bg: "bg-green-50" },
+                        { label: "New & Open", count: counts.newOpen, color: "text-emerald-600", bg: "bg-emerald-50" },
+                        { label: "In Progress", count: counts.inProgress, color: "text-orange-600", bg: "bg-orange-50" },
+                        { label: "Resolved", count: counts.resolved, color: "text-green-600", bg: "bg-green-50" },
                     ].map((stat, i) => (
                         <div key={i} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group cursor-pointer hover:border-green-200 transition-all">
                             <div>
@@ -189,32 +225,33 @@ export default function TicketsPage() {
                                     Loading Secure Queue...
                                 </div>
                             ) : (
-                                filteredTickets.map((ticket) => (
-                                    <div key={ticket.id} className="p-8 hover:bg-slate-50/50 transition-all group">
+                                allItems.map((item) => (
+                                    <div key={item.id} className="p-8 hover:bg-slate-50/50 transition-all group">
                                         <div className="flex flex-col md:flex-row gap-6 justify-between md:items-center">
                                             <div className="flex items-start gap-6">
-                                                <div className={`mt-1 h-14 w-14 rounded-3xl flex items-center justify-center flex-shrink-0 font-black text-xs ${ticket.priority === "CRITICAL" ? "bg-red-50 text-red-600 border border-red-100" :
-                                                    ticket.priority === "HIGH" ? "bg-orange-50 text-orange-600 border-orange-100" :
+                                                <div className={`mt-1 h-14 w-14 rounded-3xl flex items-center justify-center flex-shrink-0 font-black text-xs ${item.priority === "CRITICAL" || item.priority === "HIGH" ? "bg-red-50 text-red-600 border border-red-100" :
+                                                    item.priority === "NORMAL" ? "bg-orange-50 text-orange-600 border-orange-100" :
                                                         "bg-emerald-50 text-emerald-600 border border-emerald-100"
                                                     }`}>
-                                                    {ticket.priority.charAt(0)}
+                                                    {item.priority.charAt(0)}
                                                 </div>
                                                 <div>
                                                     <div className="flex items-center gap-3 mb-1">
-                                                        <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${ticket.issueType === "HARDWARE" ? "bg-red-50 text-red-600 border-red-100" :
-                                                            ticket.issueType === "SOFTWARE" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                                                "bg-green-50 text-green-600 border-green-100"
+                                                        <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${item.type === 'RESOURCE_REQUEST' ? 'bg-blue-50 text-blue-600 border-blue-100' :
+                                                            item.issueType === "HARDWARE" ? "bg-red-50 text-red-600 border-red-100" :
+                                                                item.issueType === "SOFTWARE" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                                                    "bg-green-50 text-green-600 border-green-100"
                                                             }`}>
-                                                            {ticket.issueType}
+                                                            {item.type === 'RESOURCE_REQUEST' ? 'RESOURCE' : item.issueType}
                                                         </span>
                                                         <span className="text-slate-300">•</span>
-                                                        <span className="text-[10px] font-black text-slate-400 tracking-widest uppercase">{ticket.ticketNumber}</span>
+                                                        <span className="text-[10px] font-black text-slate-400 tracking-widest uppercase">{item.type === 'RESOURCE_REQUEST' ? item.requestNumber : item.ticketNumber}</span>
                                                     </div>
-                                                    <h4 className="text-lg font-bold text-slate-900 group-hover:text-green-600 transition-colors uppercase tracking-tight">{ticket.title}</h4>
-                                                    <p className="text-slate-500 text-sm mt-1 line-clamp-1">{ticket.description}</p>
+                                                    <h4 className="text-lg font-bold text-slate-900 group-hover:text-green-600 transition-colors uppercase tracking-tight">{item.title}</h4>
+                                                    <p className="text-slate-500 text-sm mt-1 line-clamp-1">{item.description}</p>
                                                     <div className="flex items-center gap-4 mt-4">
-                                                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">ASSET: {ticket.asset?.assetNumber || "GENERAL"}</span>
-                                                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">DEPT: {ticket.department?.code}</span>
+                                                        {item.type === 'TICKET' && <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">ASSET: {item.asset?.assetNumber || "GENERAL"}</span>}
+                                                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">DEPT: {item.department?.code}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -222,18 +259,18 @@ export default function TicketsPage() {
                                             <div className="flex items-center gap-4">
                                                 <div className="text-right mr-4 hidden md:block">
                                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Logged By</p>
-                                                    <p className="text-xs font-bold text-slate-700">{ticket.createdBy?.name}</p>
+                                                    <p className="text-xs font-bold text-slate-700">{item.createdBy?.name}</p>
                                                 </div>
                                                 <div className="flex flex-col gap-2">
-                                                    <span className={`px-4 py-1.5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center ${ticket.status === "DEPLOYED" || ticket.status === "RESOLVED" ? "bg-green-500 text-white" :
-                                                        ticket.status === "PROCESSING" ? "bg-emerald-500 text-white" :
+                                                    <span className={`px-4 py-1.5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center ${item.status === "DEPLOYED" || item.status === "RESOLVED" || item.status === "COMPLETED" ? "bg-green-500 text-white" :
+                                                        item.status === "PROCESSING" || item.status === "IN_PROGRESS" ? "bg-emerald-500 text-white" :
                                                             "bg-slate-900 text-white"
                                                         }`}>
-                                                        {ticket.status}
+                                                        {item.status}
                                                     </span>
-                                                    {session?.user?.role === "ADMIN" && ticket.status !== "RESOLVED" && (
+                                                    {session?.user?.role === "ADMIN" && item.type === 'TICKET' && item.status !== "RESOLVED" && (
                                                         <button
-                                                            onClick={() => updateStatus(ticket.id, ticket.status)}
+                                                            onClick={() => updateStatus(item.id, item.status)}
                                                             className="text-[10px] font-black text-green-600 hover:text-green-700 uppercase tracking-widest flex items-center justify-center gap-1"
                                                         >
                                                             UPDATE STATUS <ArrowRight className="h-3 w-3" />

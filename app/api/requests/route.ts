@@ -60,12 +60,20 @@ export async function GET(req: NextRequest) {
                 },
             });
         } else if (role === "HOD") {
-            // HOD sees only their requests
+            // HOD sees all requests for their department
+            const departmentId = session.user.departmentId;
+            if (!departmentId) {
+                return NextResponse.json({ error: "No department assigned" }, { status: 400 });
+            }
+
             requests = await prisma.request.findMany({
-                where: { createdById: userId },
+                where: { departmentId: departmentId },
                 include: {
                     department: {
                         select: { name: true, code: true },
+                    },
+                    createdBy: {
+                        select: { name: true, email: true },
                     },
                     approvedBy: {
                         select: { name: true, email: true },
