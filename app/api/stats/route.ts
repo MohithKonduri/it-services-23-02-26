@@ -100,11 +100,24 @@ export async function GET(req: NextRequest) {
                 prisma.request.count({
                     where: {
                         departmentId: user.departmentId,
-                        status: { in: ["PENDING", "APPROVED", "ASSIGNED", "IN_PROGRESS"] }
+                        status: { in: ["PENDING", "APPROVED", "ASSIGNED", "IN_PROGRESS"] },
+                        type: { not: "ACCOUNT_APPROVAL" }
                     }
                 }),
-                prisma.request.count({ where: { departmentId: user.departmentId, status: "PENDING" } }),
-                prisma.request.count({ where: { departmentId: user.departmentId, status: "APPROVED" } }),
+                prisma.request.count({
+                    where: {
+                        departmentId: user.departmentId,
+                        status: "PENDING",
+                        type: { not: "ACCOUNT_APPROVAL" }
+                    }
+                }),
+                prisma.request.count({
+                    where: {
+                        departmentId: user.departmentId,
+                        status: "APPROVED",
+                        type: { not: "ACCOUNT_APPROVAL" }
+                    }
+                }),
             ]);
 
             return NextResponse.json({
