@@ -67,7 +67,7 @@ export default function TicketsPage() {
 
             // Map requests to look like tickets for the UI
             const mappedRequests = fetchedRequests
-                .filter(r => r.status === "APPROVED" || r.status === "IN_PROGRESS" || r.status === "COMPLETED")
+                .filter(r => (r.status === "APPROVED" || r.status === "IN_PROGRESS" || r.status === "COMPLETED") && r.type !== "ACCOUNT_APPROVAL")
                 .map(r => ({
                     ...r,
                     ticketNumber: r.requestNumber,
