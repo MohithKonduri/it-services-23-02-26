@@ -54,11 +54,32 @@ export default function TicketsPage() {
 
     const fetchTickets = async () => {
         try {
-            const res = await fetch("/api/tickets");
-            const data = await res.json();
-            setTickets(Array.isArray(data) ? data : []);
+            const [ticketsRes, requestsRes] = await Promise.all([
+                fetch("/api/tickets"),
+                fetch("/api/requests")
+            ]);
+
+            const ticketsData = await ticketsRes.json();
+            const requestsData = await requestsRes.json();
+
+            const fetchedTickets = Array.isArray(ticketsData) ? ticketsData : [];
+            const fetchedRequests = Array.isArray(requestsData) ? requestsData : [];
+
+            // Map requests to look like tickets for the UI
+            const mappedRequests = fetchedRequests
+                .filter(r => r.status === "APPROVED" || r.status === "IN_PROGRESS" || r.status === "COMPLETED")
+                .map(r => ({
+                    ...r,
+                    ticketNumber: r.requestNumber,
+                    issueType: r.type,
+                    isResourceRequest: true
+                }));
+
+            setTickets([...fetchedTickets, ...mappedRequests].sort((a, b) =>
+                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            ));
         } catch (error) {
-            console.error("Failed to fetch tickets", error);
+            console.error("Failed to fetch queue items", error);
             setTickets([]);
         } finally {
             setLoading(false);
@@ -97,20 +118,43 @@ export default function TicketsPage() {
         }
     };
 
-    const updateStatus = async (id: string, currentStatus: string) => {
-        let nextStatus = "PROCESSING";
-        if (currentStatus === "PROCESSING") nextStatus = "RESOLVED";
+    const updateStatus = async (item: any, unifiedStatus: string) => {
+        const id = item.id;
+        const isRequest = item.isResourceRequest;
+
+        // Map unified UI status to database-specific enums
+        let finalStatus = unifiedStatus;
+        if (isRequest) {
+            if (unifiedStatus === "PENDING") finalStatus = "PENDING";
+            if (unifiedStatus === "IN_PROCESS") finalStatus = "IN_PROGRESS";
+            if (unifiedStatus === "COMPLETED") finalStatus = "COMPLETED";
+            if (unifiedStatus === "CLOSED") finalStatus = "DECLINED";
+        } else {
+            if (unifiedStatus === "PENDING") finalStatus = "SUBMITTED";
+            if (unifiedStatus === "IN_PROCESS") finalStatus = "PROCESSING";
+            if (unifiedStatus === "COMPLETED") finalStatus = "RESOLVED";
+            if (unifiedStatus === "CLOSED") finalStatus = "CLOSED";
+        }
 
         try {
-            await fetch(`/api/tickets/${id}`, {
+            const endpoint = isRequest ? `/api/requests/${id}` : `/api/tickets/${id}`;
+            await fetch(endpoint, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: nextStatus })
+                body: JSON.stringify({ status: finalStatus })
             });
             fetchTickets();
         } catch (error) {
-            console.error("Failed to update ticket", error);
+            console.error("Failed to update item", error);
         }
+    };
+
+    const getUnifiedStatus = (status: string) => {
+        if (status === "SUBMITTED") return "PENDING";
+        if (status === "PROCESSING" || status === "QUEUED" || status === "ASSIGNED" || status === "IN_PROGRESS") return "IN_PROCESS";
+        if (status === "RESOLVED" || status === "DEPLOYED") return "COMPLETED";
+        if (status === "CLOSED" || status === "DECLINED") return "CLOSED";
+        return status;
     };
 
     const safeTickets = Array.isArray(tickets) ? tickets : [];
@@ -142,9 +186,9 @@ export default function TicketsPage() {
                 {/* Status Bubbles */}
                 <div className="xl:col-span-1 space-y-4">
                     {[
-                        { label: "New & Open", count: safeTickets.filter(t => t.status === "SUBMITTED").length, color: "text-emerald-600", bg: "bg-emerald-50" },
-                        { label: "In Progress", count: safeTickets.filter(t => t.status === "PROCESSING").length, color: "text-orange-600", bg: "bg-orange-50" },
-                        { label: "Resolved", count: safeTickets.filter(t => t.status === "RESOLVED" || t.status === "DEPLOYED").length, color: "text-green-600", bg: "bg-green-50" },
+                        { label: "New & Open", count: tickets.filter(t => t.status === "SUBMITTED" || t.status === "APPROVED").length, color: "text-emerald-600", bg: "bg-emerald-50" },
+                        { label: "In Progress", count: tickets.filter(t => t.status === "PROCESSING" || t.status === "IN_PROGRESS").length, color: "text-orange-600", bg: "bg-orange-50" },
+                        { label: "Resolved", count: tickets.filter(t => t.status === "RESOLVED" || t.status === "DEPLOYED" || t.status === "COMPLETED").length, color: "text-green-600", bg: "bg-green-50" },
                     ].map((stat, i) => (
                         <div key={i} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group cursor-pointer hover:border-green-200 transition-all">
                             <div>
@@ -201,14 +245,20 @@ export default function TicketsPage() {
                                                 </div>
                                                 <div>
                                                     <div className="flex items-center gap-3 mb-1">
-                                                        <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${ticket.issueType === "HARDWARE" ? "bg-red-50 text-red-600 border-red-100" :
-                                                            ticket.issueType === "SOFTWARE" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                                                "bg-green-50 text-green-600 border-green-100"
+                                                        <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${ticket.issueType === "HARDWARE" || ticket.issueType === "HARDWARE_REPAIR" ? "bg-red-50 text-red-600 border-red-100" :
+                                                            ticket.issueType === "SOFTWARE" || ticket.issueType === "SOFTWARE_INSTALLATION" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                                                ticket.isResourceRequest ? "bg-blue-50 text-blue-600 border-blue-100" : "bg-green-50 text-green-600 border-green-100"
                                                             }`}>
-                                                            {ticket.issueType}
+                                                            {ticket.issueType.replace('_', ' ')}
                                                         </span>
                                                         <span className="text-slate-300">•</span>
                                                         <span className="text-[10px] font-black text-slate-400 tracking-widest uppercase">{ticket.ticketNumber}</span>
+                                                        {ticket.isResourceRequest && (
+                                                            <>
+                                                                <span className="text-slate-300">•</span>
+                                                                <span className="text-[10px] font-black text-blue-500 tracking-widest uppercase">Approved Request</span>
+                                                            </>
+                                                        )}
                                                     </div>
                                                     <h4 className="text-lg font-bold text-slate-900 group-hover:text-green-600 transition-colors uppercase tracking-tight">{ticket.title}</h4>
                                                     <p className="text-slate-500 text-sm mt-1 line-clamp-1">{ticket.description}</p>
@@ -231,13 +281,20 @@ export default function TicketsPage() {
                                                         }`}>
                                                         {ticket.status}
                                                     </span>
-                                                    {session?.user?.role === "ADMIN" && ticket.status !== "RESOLVED" && (
-                                                        <button
-                                                            onClick={() => updateStatus(ticket.id, ticket.status)}
-                                                            className="text-[10px] font-black text-green-600 hover:text-green-700 uppercase tracking-widest flex items-center justify-center gap-1"
+                                                    {session?.user?.role === "ADMIN" && (
+                                                        <select
+                                                            value={getUnifiedStatus(ticket.status)}
+                                                            onChange={(e) => updateStatus(ticket, e.target.value)}
+                                                            disabled={ticket.status === "COMPLETED" || ticket.status === "RESOLVED" || ticket.status === "CLOSED" || ticket.status === "DECLINED"}
+                                                            className={`text-[10px] font-black border rounded-lg px-2 py-1.5 uppercase tracking-widest outline-none transition-all ${ticket.status === "COMPLETED" || ticket.status === "RESOLVED"
+                                                                ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                                                                : "text-green-600 bg-white border-green-100 focus:ring-2 focus:ring-green-500 cursor-pointer hover:border-green-300"
+                                                                }`}
                                                         >
-                                                            UPDATE STATUS <ArrowRight className="h-3 w-3" />
-                                                        </button>
+                                                            <option value="APPROVED">Approved</option>
+                                                            <option value="IN_PROCESS">In Process</option>
+                                                            <option value="COMPLETED">Completed</option>
+                                                        </select>
                                                     )}
                                                 </div>
                                             </div>
@@ -320,6 +377,6 @@ export default function TicketsPage() {
                     </button>
                 </form>
             </Modal>
-        </div>
+        </div >
     );
 }

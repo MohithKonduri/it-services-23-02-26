@@ -123,9 +123,12 @@ export async function GET(req: NextRequest) {
                 totalSystems,
                 totalServers,
                 totalRouters,
-                pendingTickets,
-                inProgressTickets,
-                completedToday,
+                pendingTicketCount,
+                inProgressTicketCount,
+                completedTodayTicketCount,
+                approvedRequestCount,
+                inProgressRequestCount,
+                completedRequestCount,
             ] = await Promise.all([
                 prisma.asset.count({ where: { type: { in: ["DESKTOP", "LAPTOP"] } } }),
                 prisma.asset.count({ where: { type: "SERVER" } }),
@@ -140,15 +143,25 @@ export async function GET(req: NextRequest) {
                         },
                     },
                 }),
+                prisma.request.count({ where: { status: "APPROVED" } }),
+                prisma.request.count({ where: { status: "IN_PROGRESS" } }),
+                prisma.request.count({
+                    where: {
+                        status: "COMPLETED",
+                        completedAt: {
+                            gte: new Date(new Date().setHours(0, 0, 0, 0)),
+                        },
+                    },
+                }),
             ]);
 
             return NextResponse.json({
                 totalSystems,
                 totalServers,
                 totalRouters,
-                pendingTickets,
-                inProgressTickets,
-                completedToday,
+                pendingTickets: pendingTicketCount + approvedRequestCount,
+                inProgressTickets: inProgressTicketCount + inProgressRequestCount,
+                completedToday: completedTodayTicketCount + completedRequestCount,
             });
         }
 
