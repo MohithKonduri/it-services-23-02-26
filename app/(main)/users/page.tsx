@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, Fragment } from "react";
 import {
     User,
     Mail,
@@ -13,7 +13,9 @@ import {
     Briefcase,
     Trash2,
     Key,
-    ShieldAlert
+    ShieldAlert,
+    ChevronDown,
+    ChevronRight
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { Modal } from "@/components/ui/modal";
@@ -29,6 +31,12 @@ export default function UsersPage() {
     const [showOptionsId, setShowOptionsId] = useState<string | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [resettingId, setResettingId] = useState<string | null>(null);
+
+    const [expandedDepts, setExpandedDepts] = useState<string[]>([]);
+
+    const toggleDept = (deptId: string) => {
+        setExpandedDepts(prev => prev.includes(deptId) ? prev.filter(id => id !== deptId) : [...prev, deptId]);
+    };
 
     useEffect(() => {
         fetchUsers();
@@ -135,6 +143,135 @@ export default function UsersPage() {
         )
     );
 
+    const adminGroups = useMemo(() => {
+        const deptMap = new Map();
+        users.forEach(u => {
+            if (u.role !== "HOD" && u.role !== "LAB_INCHARGE") return;
+
+            const dId = u.departmentId || "GLOBAL";
+            if (!deptMap.has(dId)) {
+                deptMap.set(dId, { hod: null, labIncharges: [], departmentId: dId });
+            }
+            if (u.role === "HOD") {
+                deptMap.get(dId).hod = u;
+            } else {
+                deptMap.get(dId).labIncharges.push(u);
+            }
+        });
+
+        const groups: any[] = [];
+        deptMap.forEach((group, dId) => {
+            const hodMatches = group.hod && (group.hod.name?.toLowerCase().includes(search.toLowerCase()) || group.hod.email?.toLowerCase().includes(search.toLowerCase()));
+
+            const matchedLabIncharges = group.labIncharges.filter((li: any) =>
+                li.name?.toLowerCase().includes(search.toLowerCase()) || li.email?.toLowerCase().includes(search.toLowerCase())
+            );
+
+            if (hodMatches || matchedLabIncharges.length > 0) {
+                groups.push({
+                    hod: group.hod,
+                    labIncharges: matchedLabIncharges,
+                    departmentId: dId
+                });
+            }
+        });
+        return groups;
+    }, [users, search]);
+
+    const renderUserRow = (user: any, isChild: boolean = false, expandProps?: { hasChildren: boolean, isExpanded: boolean, onToggle: () => void }) => (
+        <tr
+            key={user.id}
+            className={`hover:bg-blue-50/30 transition-colors group ${expandProps?.hasChildren ? 'cursor-pointer' : ''}`}
+            onClick={expandProps?.hasChildren ? expandProps.onToggle : undefined}
+        >
+            <td className="px-10 py-5">
+                <div className={`flex items-center ${isChild ? 'ml-12 relative' : ''}`}>
+                    {isChild && (
+                        <div className="absolute -left-8 top-1/2 w-6 h-px bg-slate-200" />
+                    )}
+                    {expandProps && (
+                        <div className="mr-4 -ml-2 text-slate-400">
+                            {expandProps.hasChildren ? (
+                                expandProps.isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />
+                            ) : (
+                                <div className="w-4 h-4" />
+                            )}
+                        </div>
+                    )}
+                    <div className="flex items-center gap-5">
+                        <div className="h-14 w-14 flex-shrink-0 rounded-[1.25rem] bg-slate-100 flex items-center justify-center text-slate-400 font-black group-hover:bg-gradient-to-br group-hover:from-blue-500 group-hover:to-indigo-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-500/20 transition-all duration-300 transform group-hover:-translate-y-0.5">
+                            <User className="h-6 w-6" strokeWidth={2.5} />
+                        </div>
+                        <div>
+                            <p className="font-bold text-slate-900 tracking-tight text-[15px]">{user.name}</p>
+                            <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1 font-medium bg-slate-100/50 w-fit px-2.5 py-1 rounded-md">
+                                <Mail className="h-3 w-3" />
+                                {user.email}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td className="px-6 py-5">
+                <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-widest text-slate-700">
+                    <Shield className={`h-4 w-4 ${user.role === "ADMIN" ? "text-indigo-500" : "text-blue-500"}`} strokeWidth={2.5} />
+                    {user.role.replace('_', ' ')}
+                </div>
+            </td>
+            <td className="px-6 py-5">
+                <div className="flex items-center gap-2">
+                    <Building2 className="h-4 w-4 text-slate-400" />
+                    <span className="font-bold text-xs text-slate-600 uppercase tracking-wider">
+                        {user.department?.name || "Global / IT"}
+                    </span>
+                </div>
+            </td>
+            <td className="px-6 py-5">
+                <div className="flex items-center gap-2.5">
+                    <div className="relative flex h-3 w-3">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-white shadow-sm"></span>
+                    </div>
+                    <span className="text-xs font-black text-slate-700 uppercase tracking-widest">Active</span>
+                </div>
+            </td>
+            {session?.user?.role === "DEAN" && (
+                <td className="px-10 py-5 text-right relative" onClick={(e) => e.stopPropagation()}>
+                    <button
+                        onClick={() => setShowOptionsId(showOptionsId === user.id ? null : user.id)}
+                        className="p-3 bg-slate-50 hover:bg-white rounded-xl border border-transparent hover:border-slate-200 hover:shadow-md transition-all duration-200"
+                    >
+                        <MoreVertical className="h-5 w-5 text-slate-400" />
+                    </button>
+                    {showOptionsId === user.id && (
+                        <div className="absolute right-12 top-14 w-56 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 z-20 overflow-hidden transform animate-in fade-in slide-in-from-top-2 text-left">
+                            <div className="px-4 py-3 bg-slate-50/50 border-b border-slate-100 flex items-center gap-2">
+                                <ShieldAlert className="w-4 h-4 text-slate-400" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Admin Actions</span>
+                            </div>
+                            <button
+                                onClick={() => handleResetPassword(user.id)}
+                                disabled={resettingId === user.id}
+                                className="w-full text-left px-5 py-3.5 text-slate-700 hover:bg-blue-50/50 hover:text-blue-700 text-xs font-bold uppercase tracking-widest flex items-center gap-3 transition-colors border-b border-slate-50"
+                            >
+                                {resettingId === user.id ? <Loader2 className="h-4 w-4 animate-spin text-blue-500" /> : <Key className="h-4 w-4 text-blue-500" />}
+                                Reset Password
+                            </button>
+                            <button
+                                onClick={() => handleDeleteUser(user.id)}
+                                disabled={deletingId === user.id}
+                                className="w-full text-left px-5 py-3.5 text-red-600 hover:bg-red-50 text-xs font-bold uppercase tracking-widest flex items-center gap-3 transition-colors"
+                            >
+                                {deletingId === user.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                                Delete Account
+                            </button>
+                        </div>
+                    )}
+                </td>
+            )}
+        </tr>
+    );
+
     return (
         <div className="p-6 lg:p-10 space-y-8 min-h-[calc(100vh-2rem)] bg-slate-50/50">
             {/* Header Section */}
@@ -211,81 +348,32 @@ export default function UsersPage() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
-                                {filteredUsers.map((user) => (
-                                    <tr key={user.id} className="hover:bg-blue-50/30 transition-colors group">
-                                        <td className="px-10 py-5">
-                                            <div className="flex items-center gap-5">
-                                                <div className="h-14 w-14 rounded-[1.25rem] bg-slate-100 flex items-center justify-center text-slate-400 font-black group-hover:bg-gradient-to-br group-hover:from-blue-500 group-hover:to-indigo-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-500/20 transition-all duration-300 transform group-hover:-translate-y-0.5">
-                                                    <User className="h-6 w-6" strokeWidth={2.5} />
-                                                </div>
-                                                <div>
-                                                    <p className="font-bold text-slate-900 tracking-tight text-[15px]">{user.name}</p>
-                                                    <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1 font-medium bg-slate-100/50 w-fit px-2.5 py-1 rounded-md">
-                                                        <Mail className="h-3 w-3" />
-                                                        {user.email}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-5">
-                                            <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-widest text-slate-700">
-                                                <Shield className={`h-4 w-4 ${user.role === "ADMIN" ? "text-indigo-500" : "text-blue-500"}`} strokeWidth={2.5} />
-                                                {user.role}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-5">
-                                            <div className="flex items-center gap-2">
-                                                <Building2 className="h-4 w-4 text-slate-400" />
-                                                <span className="font-bold text-xs text-slate-600 uppercase tracking-wider">
-                                                    {user.department?.name || "Global / IT"}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-5">
-                                            <div className="flex items-center gap-2.5">
-                                                <div className="relative flex h-3 w-3">
-                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20"></span>
-                                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-white shadow-sm"></span>
-                                                </div>
-                                                <span className="text-xs font-black text-slate-700 uppercase tracking-widest">Active</span>
-                                            </div>
-                                        </td>
-                                        {session?.user?.role === "DEAN" && (
-                                            <td className="px-10 py-5 text-right relative">
-                                                <button
-                                                    onClick={() => setShowOptionsId(showOptionsId === user.id ? null : user.id)}
-                                                    className="p-3 bg-slate-50 hover:bg-white rounded-xl border border-transparent hover:border-slate-200 hover:shadow-md transition-all duration-200"
-                                                >
-                                                    <MoreVertical className="h-5 w-5 text-slate-400" />
-                                                </button>
-                                                {showOptionsId === user.id && (
-                                                    <div className="absolute right-12 top-14 w-56 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 z-20 overflow-hidden transform animate-in fade-in slide-in-from-top-2">
-                                                        <div className="px-4 py-3 bg-slate-50/50 border-b border-slate-100 flex items-center gap-2">
-                                                            <ShieldAlert className="w-4 h-4 text-slate-400" />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Admin Actions</span>
-                                                        </div>
-                                                        <button
-                                                            onClick={() => handleResetPassword(user.id)}
-                                                            disabled={resettingId === user.id}
-                                                            className="w-full text-left px-5 py-3.5 text-slate-700 hover:bg-blue-50/50 hover:text-blue-700 text-xs font-bold uppercase tracking-widest flex items-center gap-3 transition-colors border-b border-slate-50"
-                                                        >
-                                                            {resettingId === user.id ? <Loader2 className="h-4 w-4 animate-spin text-blue-500" /> : <Key className="h-4 w-4 text-blue-500" />}
-                                                            Reset Password
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleDeleteUser(user.id)}
-                                                            disabled={deletingId === user.id}
-                                                            className="w-full text-left px-5 py-3.5 text-red-600 hover:bg-red-50 text-xs font-bold uppercase tracking-widest flex items-center gap-3 transition-colors"
-                                                        >
-                                                            {deletingId === user.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                                                            Delete Account
-                                                        </button>
-                                                    </div>
+                                {session?.user?.role === "ADMIN" ? (
+                                    adminGroups.map((group) => {
+                                        const dId = group.departmentId;
+                                        const hasLabIncharges = group.labIncharges.length > 0;
+                                        const isExpanded = expandedDepts.includes(dId);
+
+                                        return (
+                                            <Fragment key={dId}>
+                                                {group.hod && renderUserRow(
+                                                    group.hod,
+                                                    false,
+                                                    {
+                                                        hasChildren: hasLabIncharges,
+                                                        isExpanded,
+                                                        onToggle: () => toggleDept(dId)
+                                                    }
                                                 )}
-                                            </td>
-                                        )}
-                                    </tr>
-                                ))}
+                                                {(!group.hod || isExpanded) && group.labIncharges.map((li: any) =>
+                                                    renderUserRow(li, !!group.hod)
+                                                )}
+                                            </Fragment>
+                                        );
+                                    })
+                                ) : (
+                                    filteredUsers.map((user) => renderUserRow(user))
+                                )}
                             </tbody>
                         </table>
                     </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
@@ -60,57 +61,67 @@ export function Sidebar() {
     });
 
     return (
-        <aside className="fixed left-0 top-0 z-40 h-screen w-72 bg-white text-slate-900 shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-all duration-300 border-r border-slate-100">
+        <aside className="fixed left-0 top-0 z-40 h-screen w-72 bg-zinc-950 text-white shadow-2xl transition-all duration-300 border-r border-zinc-800/50">
             {/* Branding */}
-            <div className="flex h-24 items-center gap-3 px-8 border-b border-slate-100 bg-white/80 backdrop-blur-xl">
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                    <Shield className="h-6 w-6 text-white" />
+            <div className="flex h-24 items-center gap-3 px-8 border-b border-zinc-800/50 bg-zinc-950/80 backdrop-blur-xl">
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#f7e479] to-amber-500 flex items-center justify-center shadow-lg shadow-[#f7e479]/20">
+                    <Shield className="h-6 w-6 text-black" />
                 </div>
-                <h1 className="text-xl font-black tracking-tighter uppercase italic">
-                    IT <span className="text-blue-600">Services</span>
+                <h1 className="text-xl font-bold tracking-tight">
+                    IT <span className="text-[#f7e479] italic font-black">SERVICES</span>
                 </h1>
             </div>
 
             {/* Profile Summary */}
-            <div className="mx-6 my-8 p-4 rounded-3xl bg-slate-50 border border-slate-100">
+            <div className="mx-6 my-8 p-4 rounded-[2rem] bg-zinc-900/50 border border-zinc-800/50 group hover:border-[#f7e479]/30 transition-all duration-300">
                 <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-2xl bg-gradient-to-tr from-slate-200 to-slate-100 flex items-center justify-center font-bold text-slate-700 shadow-sm border border-slate-200">
+                    <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-zinc-800 to-zinc-900 flex items-center justify-center font-bold text-[#f7e479] shadow-sm border border-zinc-700 group-hover:scale-105 transition-transform">
                         {session?.user?.name?.charAt(0) || "U"}
                     </div>
                     <div className="flex-1 overflow-hidden">
-                        <p className="text-xs font-black truncate text-slate-900">{session?.user?.name || "User"}</p>
-                        <p className="text-[10px] text-blue-600 font-bold uppercase tracking-widest">{session?.user?.role || "Role"}</p>
+                        <p className="text-sm font-bold truncate text-white">{session?.user?.name || "User Account"}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <p className="text-[10px] text-[#f7e479] font-black uppercase tracking-[0.15em]">{session?.user?.role?.replace('_', ' ') || "Guest"}</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Navigation */}
-            <nav className="flex flex-col gap-1 px-4">
-                {filteredLinks.map((link) => {
-                    const isActive = pathname === link.href;
-                    return (
-                        <Link
-                            key={link.name}
-                            href={link.href}
-                            className={cn(
-                                "flex items-center gap-4 px-6 py-4 rounded-[20px] transition-all duration-300 group",
-                                isActive
-                                    ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20"
-                                    : "text-slate-500 hover:text-blue-600 hover:bg-slate-50"
-                            )}
-                        >
-                            <link.icon className={cn(
-                                "h-5 w-5 transition-transform",
-                                isActive ? "scale-110" : "group-hover:scale-110"
-                            )} />
-                            <span className="text-xs font-black uppercase tracking-widest">{link.name}</span>
-                            {isActive && (
-                                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white shadow-lg shadow-white" />
-                            )}
-                        </Link>
-                    );
-                })}
-            </nav>
+            <div className="flex-1 px-4 overflow-y-auto max-h-[calc(100vh-320px)] custom-scrollbar">
+                <div className="radio-container" style={{ "--total-radio": filteredLinks.length } as any}>
+                    {filteredLinks.map((link, index) => {
+                        const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+                        return (
+                            <Fragment key={link.name}>
+                                <input
+                                    type="radio"
+                                    name="main-sidebar-nav"
+                                    id={`link-${index}`}
+                                    checked={isActive}
+                                    readOnly
+                                />
+                                <label htmlFor={`link-${index}`} className="group !py-4">
+                                    <Link
+                                        href={link.href}
+                                        className="flex items-center gap-4 w-full"
+                                    >
+                                        <link.icon className={cn(
+                                            "h-5 w-5 transition-all duration-300",
+                                            isActive ? "text-[#f7e479] scale-110" : "text-zinc-500 group-hover:text-zinc-100 group-hover:scale-110"
+                                        )} />
+                                        <span className="text-[11px] font-black uppercase tracking-[0.2em]">{link.name}</span>
+                                    </Link>
+                                </label>
+                            </Fragment>
+                        );
+                    })}
+                    <div className="glider-container">
+                        <div className="glider"></div>
+                    </div>
+                </div>
+            </div>
 
             {/* Bottom Actions */}
             <div className="absolute bottom-8 left-0 w-full px-6 space-y-2">
@@ -119,10 +130,10 @@ export function Sidebar() {
                         await signOut({ redirect: false });
                         window.location.href = "/login";
                     }}
-                    className="flex w-full items-center gap-4 px-6 py-4 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-[20px] transition-all group"
+                    className="flex w-full items-center gap-4 px-6 py-4 text-zinc-500 hover:text-red-400 hover:bg-red-500/5 rounded-[20px] transition-all group"
                 >
                     <LogOut className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-                    <span className="text-xs font-black uppercase tracking-widest">Sign Out</span>
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em]">Sign Out Early</span>
                 </button>
             </div>
         </aside>

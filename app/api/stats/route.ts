@@ -147,21 +147,21 @@ export async function GET(req: NextRequest) {
                 prisma.asset.count({ where: { type: { in: ["DESKTOP", "LAPTOP"] } } }),
                 prisma.asset.count({ where: { type: "SERVER" } }),
                 prisma.asset.count({ where: { type: { in: ["ROUTER", "SWITCH"] } } }),
-                prisma.ticket.count({ where: { status: { in: ["SUBMITTED", "PENDING", "APPROVED"] } } }),
-                prisma.ticket.count({ where: { status: { in: ["PROCESSING", "QUEUED", "ASSIGNED", "IN_PROGRESS"] } } }),
+                prisma.ticket.count({ where: { status: { in: ["SUBMITTED", "APPROVED"] } } }),
+                prisma.ticket.count({ where: { status: { in: ["PROCESSING", "QUEUED"] } } }),
                 prisma.ticket.count({
                     where: {
-                        status: { in: ["RESOLVED", "DEPLOYED", "COMPLETED"] },
+                        status: { in: ["RESOLVED", "DEPLOYED"] },
                         resolvedAt: {
                             gte: new Date(new Date().setHours(0, 0, 0, 0)),
                         },
                     },
                 }),
-                prisma.request.count({ where: { status: { in: ["SUBMITTED", "PENDING", "APPROVED"] } } }),
-                prisma.request.count({ where: { status: { in: ["PROCESSING", "QUEUED", "ASSIGNED", "IN_PROGRESS"] } } }),
+                prisma.request.count({ where: { status: { in: ["PENDING", "APPROVED"] } } }),
+                prisma.request.count({ where: { status: { in: ["ASSIGNED", "IN_PROGRESS"] } } }),
                 prisma.request.count({
                     where: {
-                        status: { in: ["RESOLVED", "DEPLOYED", "COMPLETED"] },
+                        status: "COMPLETED",
                         completedAt: {
                             gte: new Date(new Date().setHours(0, 0, 0, 0)),
                         },
