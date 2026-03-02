@@ -133,6 +133,7 @@ model Department {
   requests Request[]
   tickets  Ticket[]
   activities ActivityLog[]
+  inventoryRequests InventoryRequest[] @relation("InventoryRequestDepartment")
 
   @@index([hodId])
 }
@@ -155,6 +156,7 @@ model Lab {
   users      User[]
   tickets    Ticket[]
   activities ActivityLog[]
+  inventoryRequests InventoryRequest[] @relation("InventoryRequestLab")
 
   @@index([departmentId])
   @@index([inchargeId])
@@ -421,6 +423,8 @@ model InventoryRequest {
   requestedById   String
   approvedById    String?
   remarks         String?                @db.Text
+  departmentId    String?
+  labId           String?
   createdAt       DateTime               @default(now())
   updatedAt       DateTime               @updatedAt
 
@@ -428,10 +432,14 @@ model InventoryRequest {
   inventoryItem InventoryItem @relation(fields: [inventoryItemId], references: [id])
   requestedBy   User          @relation("InventoryRequester", fields: [requestedById], references: [id])
   approvedBy    User?         @relation("InventoryApprover", fields: [approvedById], references: [id])
+  department    Department?   @relation("InventoryRequestDepartment", fields: [departmentId], references: [id])
+  lab           Lab?          @relation("InventoryRequestLab", fields: [labId], references: [id])
 
   @@index([requestedById])
   @@index([approvedById])
   @@index([inventoryItemId])
+  @@index([departmentId])
+  @@index([labId])
 }
 
 enum InventoryRequestStatus {

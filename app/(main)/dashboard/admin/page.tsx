@@ -448,6 +448,11 @@ export default function AdminDashboard() {
                                                             {request.inventoryItem?.name} {request.quantity > 1 ? `x${request.quantity}` : ""}
                                                         </h4>
                                                         <p className="text-slate-500 text-sm mt-1">{request.remarks || "No remarks"}</p>
+                                                        {(request.department || request.lab) && (
+                                                            <p className="text-slate-500 text-xs mt-1">
+                                                                For: {request.department?.code || "N/A"}{request.lab ? ` - ${request.lab.name}` : ""}
+                                                            </p>
+                                                        )}
                                                         <div className="flex items-center gap-2 mt-3">
                                                             <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-blue-50 text-blue-600 border border-blue-100">
                                                                 SPARE PART

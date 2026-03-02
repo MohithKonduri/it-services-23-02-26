@@ -541,6 +541,15 @@ export default function DeanDashboard() {
                                                                 {req.inventoryItem?.name} {req.quantity > 1 ? `x${req.quantity}` : ""}
                                                             </h4>
                                                             <p className="text-slate-500 text-sm mt-2 font-medium line-clamp-2 max-w-2xl leading-relaxed">{req.remarks || "No remarks provided"}</p>
+                                                            {(req.department || req.lab) && (
+                                                                <div className="flex items-center gap-2 mt-2">
+                                                                    <span className="text-slate-500 text-xs font-semibold">
+                                                                        Required for: <span className="text-slate-700">{req.department?.name || req.department?.code || "N/A"}</span>
+                                                                        {req.lab && <span className="text-slate-400 mx-1">•</span>}
+                                                                        {req.lab && <span className="text-slate-700">Lab: {req.lab.name}</span>}
+                                                                    </span>
+                                                                </div>
+                                                            )}
 
                                                             <div className="flex flex-wrap items-center gap-4 mt-5">
                                                                 <div className="flex items-center gap-3">
