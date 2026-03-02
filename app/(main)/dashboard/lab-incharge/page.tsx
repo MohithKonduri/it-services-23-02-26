@@ -14,13 +14,15 @@ import {
     Zap,
     Info
 } from "lucide-react";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
+import { CreateTicketModal } from "@/components/tickets/CreateTicketModal";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function LabInchargeDashboard() {
     const { data: stats, isLoading: loadingStats } = useSWR("/api/stats", fetcher, { revalidateOnFocus: false });
     const { data: ticketsRaw } = useSWR("/api/tickets", fetcher);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     const tickets = Array.isArray(ticketsRaw) ? ticketsRaw : [];
     const loading = loadingStats;
@@ -61,7 +63,10 @@ export default function LabInchargeDashboard() {
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Server Time</p>
                         <p className="text-sm font-black text-slate-700">{new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
                     </div>
-                    <button className="flex items-center gap-2 px-5 py-3 bg-slate-900 text-white font-black text-[11px] rounded-2xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200">
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="flex items-center gap-2 px-5 py-3 bg-slate-900 text-white font-black text-[11px] rounded-2xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200"
+                    >
                         <Plus className="h-4 w-4" />
                         REPORT ISSUE
                     </button>
@@ -201,6 +206,15 @@ export default function LabInchargeDashboard() {
                     </div>
                 </div>
             </div>
+
+            <CreateTicketModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onSuccess={() => {
+                    mutate("/api/tickets");
+                    mutate("/api/stats");
+                }}
+            />
         </div>
     );
 }

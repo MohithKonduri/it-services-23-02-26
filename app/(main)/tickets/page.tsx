@@ -15,23 +15,18 @@ import {
     ArrowRight
 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
+import { CreateTicketModal } from "@/components/tickets/CreateTicketModal";
 
 export default function TicketsPage() {
     const { data: session } = useSession();
     const [tickets, setTickets] = useState<any[]>([]);
     const [resourceRequests, setResourceRequests] = useState<any[]>([]);
-    const [assets, setAssets] = useState<any[]>([]);
-    const [departments, setDepartments] = useState<any[]>([]);
-    const [labs, setLabs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [search, setSearch] = useState("");
-    const [selectedAssetId, setSelectedAssetId] = useState("");
 
     useEffect(() => {
         fetchAllData();
-        fetchInitialData();
     }, []);
 
     const fetchAllData = async () => {
@@ -52,68 +47,8 @@ export default function TicketsPage() {
         }
     };
 
-    const fetchInitialData = async () => {
-        try {
-            const [assetsRes, deptsRes, labsRes] = await Promise.all([
-                fetch("/api/assets"),
-                fetch("/api/departments"),
-                fetch("/api/labs")
-            ]);
-            const assetsData = await assetsRes.json();
-            const deptsData = await deptsRes.json();
-            const labsData = await labsRes.json();
-
-            setAssets(Array.isArray(assetsData) ? assetsData : []);
-            setDepartments(Array.isArray(deptsData) ? deptsData : []);
-            setLabs(Array.isArray(labsData) ? labsData : []);
-        } catch (error) {
-            console.error("Failed to fetch metadata", error);
-        }
-    };
-
-    const handleCreateTicket = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        const formData = new FormData(e.currentTarget);
-        const body: any = Object.fromEntries(formData.entries());
-
-        // Use session departmentId as primary truth for Lab Incharges
-        if (session?.user?.departmentId) {
-            body.departmentId = session.user.departmentId;
-        } else {
-            // Fallback to asset or general list
-            const selectedAsset = assets.find(a => a.id === selectedAssetId);
-            if (selectedAsset) {
-                body.departmentId = selectedAsset.departmentId;
-            } else if (departments.length > 0) {
-                body.departmentId = departments[0].id;
-            }
-        }
-
-        // Ensure empty strings are treated as null for the API
-        if (!body.assetId) body.assetId = null;
-        if (!body.labId) body.labId = null;
-
-        try {
-            const res = await fetch("/api/tickets", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body),
-            });
-            if (res.ok) {
-                setShowCreateModal(false);
-                fetchAllData();
-                setSelectedAssetId("");
-            } else {
-                const error = await res.json();
-                alert(error.error || "Failed to create ticket");
-            }
-        } catch (error) {
-            console.error("Failed to create ticket", error);
-            alert("Network error while creating request");
-        } finally {
-            setIsSubmitting(false);
-        }
+    const refreshData = () => {
+        fetchAllData();
     };
 
     const updateStatus = async (item: any, unifiedStatus: string) => {
@@ -337,75 +272,11 @@ export default function TicketsPage() {
             </div>
 
             {/* Raise Request Modal */}
-            <Modal
+            <CreateTicketModal
                 isOpen={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
-                title="Raise Support Request"
-                className="max-w-2xl"
-            >
-                <form onSubmit={handleCreateTicket} className="space-y-6">
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Diagnostic Title</label>
-                        <input name="title" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" placeholder="e.g. System blue screen on boot" />
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Detailed Description</label>
-                        <textarea name="description" required rows={4} className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500" placeholder="Explain the technical issue in detail..." />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Issue Type</label>
-                            <select name="issueType" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500">
-                                <option value="HARDWARE">Hardware failure</option>
-                                <option value="SOFTWARE">Software / OS issue</option>
-                                <option value="NETWORK">Network / Connectivity</option>
-                                <option value="OTHER">Other technical issue</option>
-                            </select>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">System Priority</label>
-                            <select name="priority" required className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500">
-                                <option value="LOW">Low - No impact</option>
-                                <option value="NORMAL">Normal - Standard</option>
-                                <option value="HIGH">High - Operational risk</option>
-                                <option value="CRITICAL">Critical - System down</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Affected Asset</label>
-                            <select
-                                name="assetId"
-                                className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500"
-                                value={selectedAssetId}
-                                onChange={(e) => setSelectedAssetId(e.target.value)}
-                            >
-                                <option value="">General Issue (No specific asset)</option>
-                                {assets.map(a => <option key={a.id} value={a.id}>{a.assetNumber} - {a.name}</option>)}
-                            </select>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Deployment Location (Lab)</label>
-                            <select name="labId" className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-green-500">
-                                <option value="">Institutional Global</option>
-                                {labs.map(l => <option key={l.id} value={l.id}>{l.name} ({l.code})</option>)}
-                            </select>
-                        </div>
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-full py-4 bg-green-600 text-white font-black rounded-2xl shadow-xl shadow-green-200 hover:bg-green-700 transition-all flex items-center justify-center gap-2"
-                    >
-                        {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : "DISPATCH SUPPORT REQUEST"}
-                    </button>
-                </form>
-            </Modal>
+                onSuccess={refreshData}
+            />
         </div>
     );
 }
