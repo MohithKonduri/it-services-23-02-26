@@ -201,7 +201,8 @@ export default function AdminDashboard() {
                             icon: Shield,
                             colors: "from-blue-600 hover:from-blue-500 to-indigo-700 hover:to-indigo-600",
                             shadow: "shadow-blue-500/20",
-                            text: "text-white"
+                            text: "text-white",
+                            href: "/assets"
                         },
                         {
                             label: "Pending Tasks",
@@ -212,7 +213,8 @@ export default function AdminDashboard() {
                             shadow: "shadow-slate-200/40",
                             text: "text-slate-900",
                             iconColor: "text-orange-500",
-                            bgOverlay: "bg-orange-50"
+                            bgOverlay: "bg-orange-50",
+                            href: "/tickets"
                         },
                         {
                             label: "In Process",
@@ -223,7 +225,8 @@ export default function AdminDashboard() {
                             shadow: stats?.inProgressTickets > 0 ? "shadow-red-500/20" : "shadow-slate-200/40",
                             text: stats?.inProgressTickets > 0 ? "text-white" : "text-slate-900",
                             iconColor: stats?.inProgressTickets > 0 ? "text-white" : "text-red-500",
-                            bgOverlay: stats?.inProgressTickets > 0 ? "bg-white/10" : "bg-red-50"
+                            bgOverlay: stats?.inProgressTickets > 0 ? "bg-white/10" : "bg-red-50",
+                            href: "/tickets"
                         },
                         {
                             label: "Resolved Today",
@@ -232,13 +235,15 @@ export default function AdminDashboard() {
                             icon: CheckCircle2,
                             colors: "from-emerald-500 hover:from-emerald-400 to-teal-600 hover:to-teal-500",
                             shadow: "shadow-emerald-500/20",
-                            text: "text-white"
+                            text: "text-white",
+                            href: "/tickets"
                         },
                     ].map((stat, i) => (
                         <div
                             key={i}
+                            onClick={() => stat.href && router.push(stat.href)}
                             className={cn(
-                                `bg-gradient-to-br ${stat.colors} p-6 rounded-3xl shadow-xl ${stat.shadow} relative group overflow-hidden transition-all duration-500 hover:-translate-y-1 cursor-pointer`
+                                `bg-gradient-to-br ${stat.colors} p-6 rounded-3xl shadow-xl ${stat.shadow} relative group overflow-hidden transition-all duration-500 hover:-translate-y-1 ${stat.href ? 'cursor-pointer' : ''}`
                             )}
                         >
                             <div className={cn(

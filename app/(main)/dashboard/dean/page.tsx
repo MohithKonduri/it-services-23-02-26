@@ -214,7 +214,8 @@ export default function DeanDashboard() {
                             colors: "from-blue-600 hover:from-blue-500 to-indigo-700 hover:to-indigo-600",
                             shadow: "shadow-blue-500/20",
                             text: "text-white",
-                            subtext: stats?.lastSync ? `Updated ${new Date(stats.lastSync).toLocaleTimeString()}` : "Fetching..."
+                            subtext: stats?.lastSync ? `Updated ${new Date(stats.lastSync).toLocaleTimeString()}` : "Fetching...",
+                            href: "/assets"
                         },
                         {
                             label: "Ready for Use",
@@ -223,7 +224,8 @@ export default function DeanDashboard() {
                             icon: CheckCircle2,
                             colors: "from-emerald-500 hover:from-emerald-400 to-teal-600 hover:to-teal-500",
                             shadow: "shadow-emerald-500/20",
-                            text: "text-white"
+                            text: "text-white",
+                            href: "/assets"
                         },
                         {
                             label: "Service Pipeline",
@@ -234,7 +236,8 @@ export default function DeanDashboard() {
                             shadow: "shadow-slate-200/40",
                             text: "text-slate-900",
                             iconColor: "text-orange-500",
-                            bgOverlay: "bg-orange-50"
+                            bgOverlay: "bg-orange-50",
+                            href: "/tickets"
                         },
                         {
                             label: "Priority Actions",
@@ -245,7 +248,8 @@ export default function DeanDashboard() {
                             shadow: stats?.priorityTasks > 0 ? "shadow-red-500/20" : "shadow-slate-200/40",
                             text: stats?.priorityTasks > 0 ? "text-white" : "text-slate-900",
                             iconColor: stats?.priorityTasks > 0 ? "text-white" : "text-slate-400",
-                            bgOverlay: stats?.priorityTasks > 0 ? "bg-white/10" : "bg-slate-100"
+                            bgOverlay: stats?.priorityTasks > 0 ? "bg-white/10" : "bg-slate-100",
+                            href: "/tickets"
                         },
                     ].map((kpi, i) => (
                         <div
@@ -253,6 +257,8 @@ export default function DeanDashboard() {
                             onClick={() => {
                                 if (kpi.label === "Priority Actions") {
                                     document.getElementById('institutional-queue')?.scrollIntoView({ behavior: 'smooth' });
+                                } else if (kpi.href) {
+                                    router.push(kpi.href);
                                 }
                             }}
                             className={cn(
