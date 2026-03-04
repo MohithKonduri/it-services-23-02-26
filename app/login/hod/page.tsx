@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Lock, Mail, Loader2, Users, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function HODLoginPage() {
     const router = useRouter();
@@ -53,7 +54,12 @@ export default function HODLoginPage() {
     return (
         <div className="flex min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
             {/* Left Side - Branding */}
-            <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-500 to-emerald-600 p-12 flex-col relative overflow-hidden">
+            <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+                className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-500 to-emerald-600 p-12 flex-col relative overflow-hidden"
+            >
                 <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:60px_60px]" />
                 <div className="absolute inset-0 bg-gradient-to-t from-emerald-600/50 to-transparent" />
 
@@ -68,12 +74,22 @@ export default function HODLoginPage() {
                 </div>
 
                 <div className="relative z-10 flex-1 flex flex-col justify-center">
-                    <div className="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6">
+                    <motion.div
+                        initial={{ scale: 0, rotate: -10 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ delay: 0.4, type: "spring", stiffness: 200, damping: 15 }}
+                        className="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6"
+                    >
                         <Users className="h-10 w-10 text-white" />
-                    </div>
-                    <h1 className="text-5xl font-bold text-white mb-4">
+                    </motion.div>
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5, duration: 0.5 }}
+                        className="text-5xl font-bold text-white mb-4"
+                    >
                         HOD Portal
-                    </h1>
+                    </motion.h1>
                     <p className="text-xl text-white/80 mb-8">
                         Department Management & Operations
                     </p>
@@ -81,7 +97,7 @@ export default function HODLoginPage() {
                 </div>
 
 
-            </div>
+            </motion.div>
 
             {/* Right Side - Login Form */}
             <div className="flex-1 flex items-center justify-center p-8">
@@ -94,7 +110,12 @@ export default function HODLoginPage() {
                         <span className="text-sm">Back to role selection</span>
                     </button>
 
-                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+                        className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700"
+                    >
                         <div className="text-center mb-8">
                             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl mb-4 shadow-lg">
                                 <Users className="h-8 w-8 text-white" />
@@ -169,16 +190,23 @@ export default function HODLoginPage() {
                             </div>
 
 
-                            {error && (
-                                <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
-                                    <div className="flex items-start">
-                                        <svg className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                                        </svg>
-                                        <p className="ml-3 text-sm text-red-600 dark:text-red-400">{error}</p>
-                                    </div>
-                                </div>
-                            )}
+                            <AnimatePresence>
+                                {error && (
+                                    <motion.div
+                                        initial={{ opacity: 0, height: 0, y: -10 }}
+                                        animate={{ opacity: 1, height: "auto", y: 0 }}
+                                        exit={{ opacity: 0, height: 0, y: -10 }}
+                                        className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4"
+                                    >
+                                        <div className="flex items-start">
+                                            <svg className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                            </svg>
+                                            <p className="ml-3 text-sm text-red-600 dark:text-red-400">{error}</p>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
 
                             <button
                                 type="submit"
@@ -213,7 +241,7 @@ export default function HODLoginPage() {
                                 </button>
                             </p>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </div>
