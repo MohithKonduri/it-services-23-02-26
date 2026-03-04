@@ -235,7 +235,7 @@ export default function HODLoginPage() {
                                 <button
                                     type="button"
                                     onClick={() => router.push("/register/hod")}
-                                    className="ml-2 text-green-600 hover:text-green-700 font-black hover:underline transition-colors"
+                                    className="ml-2 text-blue-600 hover:text-blue-700 font-black hover:underline transition-colors"
                                 >
                                     Register for Acceptance
                                 </button>

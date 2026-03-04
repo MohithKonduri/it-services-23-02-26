@@ -100,14 +100,27 @@ export async function DELETE(
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        // Authorization logic: Only the Dean can manage/delete HOD accounts
+        // Authorization logic
         if (session.user.role === "DEAN") {
-            if (userToDelete.role !== "HOD") {
-                return NextResponse.json({ error: "Deans can only delete HOD accounts" }, { status: 403 });
+            // Dean can delete HOD, ADMIN, LAB_INCHARGE
+            if (!["HOD", "ADMIN", "LAB_INCHARGE", "USER"].includes(userToDelete.role)) {
+                return NextResponse.json({ error: "Unauthorized: Insufficient permissions to delete this role" }, { status: 403 });
+            }
+            await prisma.user.delete({ where: { id } });
+        } else if (session.user.role === "HOD") {
+            // HOD can delete Lab Incharges in their department
+            if (userToDelete.role !== "LAB_INCHARGE") {
+                return NextResponse.json({ error: "HODs can only delete Lab Incharge accounts" }, { status: 403 });
+            }
+
+            // Further check: verify department (doing a re-fetch to be safe with deptId)
+            const targetUser = await prisma.user.findUnique({ where: { id }, select: { departmentId: true } });
+            if (targetUser?.departmentId !== session.user.departmentId) {
+                return NextResponse.json({ error: "Unauthorized: You can only delete users from your own department" }, { status: 403 });
             }
             await prisma.user.delete({ where: { id } });
         } else {
-            return NextResponse.json({ error: "Unauthorized: Only the Dean can manage user accounts" }, { status: 403 });
+            return NextResponse.json({ error: "Unauthorized: You do not have permission to delete users" }, { status: 403 });
         }
 
         return NextResponse.json({ message: "User deleted successfully" });

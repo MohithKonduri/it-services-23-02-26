@@ -139,7 +139,8 @@ export default function UsersPage() {
         (
             session?.user?.role === "HOD" ? user.role === "LAB_INCHARGE" :
                 session?.user?.role === "ADMIN" ? (user.role === "HOD" || user.role === "LAB_INCHARGE") :
-                    user.role === "HOD"
+                    session?.user?.role === "DEAN" ? (user.role === "HOD" || user.role === "ADMIN" || user.role === "DEAN") :
+                        user.role === "HOD"
         )
     );
 
@@ -181,7 +182,7 @@ export default function UsersPage() {
     const renderUserRow = (user: any, isChild: boolean = false, expandProps?: { hasChildren: boolean, isExpanded: boolean, onToggle: () => void }) => (
         <tr
             key={user.id}
-            className={`hover:bg-blue-50/30 transition-colors group ${expandProps?.hasChildren ? 'cursor-pointer' : ''}`}
+            className={`hover:bg-[#dad7cd]/40 transition-colors group ${expandProps?.hasChildren ? 'cursor-pointer' : ''}`}
             onClick={expandProps?.hasChildren ? expandProps.onToggle : undefined}
         >
             <td className="px-10 py-5">
@@ -199,7 +200,7 @@ export default function UsersPage() {
                         </div>
                     )}
                     <div className="flex items-center gap-5">
-                        <div className="h-14 w-14 flex-shrink-0 rounded-[1.25rem] bg-slate-100 flex items-center justify-center text-slate-400 font-black group-hover:bg-gradient-to-br group-hover:from-blue-500 group-hover:to-indigo-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-500/20 transition-all duration-300 transform group-hover:-translate-y-0.5">
+                        <div className="h-14 w-14 flex-shrink-0 rounded-[1.25rem] bg-slate-100 flex items-center justify-center text-slate-400 font-black group-hover:bg-gradient-to-br group-hover:from-[#344e41] group-hover:to-[#588157] group-hover:text-white group-hover:shadow-lg group-hover:shadow-[#3a5a40]/20 transition-all duration-300 transform group-hover:-translate-y-0.5">
                             <User className="h-6 w-6" strokeWidth={2.5} />
                         </div>
                         <div>
@@ -214,7 +215,7 @@ export default function UsersPage() {
             </td>
             <td className="px-6 py-5">
                 <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-widest text-slate-700">
-                    <Shield className={`h-4 w-4 ${user.role === "ADMIN" ? "text-indigo-500" : "text-blue-500"}`} strokeWidth={2.5} />
+                    <Shield className={`h-4 w-4 ${user.role === "ADMIN" ? "text-[#344e41]" : "text-[#3a5a40]"}`} strokeWidth={2.5} />
                     {user.role.replace('_', ' ')}
                 </div>
             </td>
@@ -235,7 +236,7 @@ export default function UsersPage() {
                     <span className="text-xs font-black text-slate-700 uppercase tracking-widest">Active</span>
                 </div>
             </td>
-            {session?.user?.role === "DEAN" && (
+            {(session?.user?.role === "DEAN" || session?.user?.role === "HOD") && (
                 <td className="px-10 py-5 text-right relative" onClick={(e) => e.stopPropagation()}>
                     <button
                         onClick={() => setShowOptionsId(showOptionsId === user.id ? null : user.id)}
@@ -252,9 +253,9 @@ export default function UsersPage() {
                             <button
                                 onClick={() => handleResetPassword(user.id)}
                                 disabled={resettingId === user.id}
-                                className="w-full text-left px-5 py-3.5 text-slate-700 hover:bg-blue-50/50 hover:text-blue-700 text-xs font-bold uppercase tracking-widest flex items-center gap-3 transition-colors border-b border-slate-50"
+                                className="w-full text-left px-5 py-3.5 text-slate-700 hover:bg-[#dad7cd]/40 hover:text-[#3a5a40] text-xs font-bold uppercase tracking-widest flex items-center gap-3 transition-colors border-b border-slate-50"
                             >
-                                {resettingId === user.id ? <Loader2 className="h-4 w-4 animate-spin text-blue-500" /> : <Key className="h-4 w-4 text-blue-500" />}
+                                {resettingId === user.id ? <Loader2 className="h-4 w-4 animate-spin text-[#3a5a40]" /> : <Key className="h-4 w-4 text-[#3a5a40]" />}
                                 Reset Password
                             </button>
                             <button
@@ -276,12 +277,12 @@ export default function UsersPage() {
         <div className="p-6 lg:p-10 space-y-8 min-h-[calc(100vh-2rem)] bg-slate-50/50">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 relative overflow-hidden">
-                <div className="absolute right-0 top-0 w-[500px] h-[500px] bg-gradient-to-br from-blue-50 to-indigo-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 opacity-70 pointer-events-none" />
+                <div className="absolute right-0 top-0 w-[500px] h-[500px] bg-gradient-to-br from-[#dad7cd]/40 to-[#a3b18a]/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 opacity-70 pointer-events-none" />
 
                 <div className="relative z-10">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                            <Briefcase className="h-4 w-4 text-blue-600" />
+                        <div className="h-8 w-8 rounded-full bg-[#dad7cd]/60 flex items-center justify-center">
+                            <Briefcase className="h-4 w-4 text-[#3a5a40]" />
                         </div>
                         <h1 className="text-3xl font-black text-slate-900 tracking-tight">
                             {session?.user?.role === "HOD" ? "Lab Incharges" :
@@ -299,10 +300,10 @@ export default function UsersPage() {
                 </div>
 
                 <div className="relative z-10">
-                    {session?.user?.role === "DEAN" && (
+                    {(session?.user?.role === "DEAN" || session?.user?.role === "HOD") && (
                         <button
                             onClick={() => setIsAddModalOpen(true)}
-                            className="flex items-center gap-3 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-[13px] tracking-widest uppercase rounded-2xl hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all duration-300"
+                            className="flex items-center gap-3 px-6 py-3.5 bg-gradient-to-r from-[#344e41] to-[#3a5a40] text-white font-bold text-[13px] tracking-widest uppercase rounded-2xl hover:shadow-lg hover:shadow-[#344e41]/30 hover:-translate-y-0.5 transition-all duration-300"
                         >
                             <Plus className="h-4 w-4" strokeWidth={3} />
                             REGISTER NEW
@@ -318,7 +319,7 @@ export default function UsersPage() {
                     <input
                         type="text"
                         placeholder="Search by name or email address..."
-                        className="w-full pl-12 pr-4 py-3 bg-slate-50/50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:bg-blue-50/10 transition-all font-medium placeholder:text-slate-400 text-slate-900 outline-none"
+                        className="w-full pl-12 pr-4 py-3 bg-slate-50/50 border-none rounded-xl text-sm focus:ring-2 focus:ring-[#588157]/20 focus:bg-[#dad7cd]/10 transition-all font-medium placeholder:text-slate-400 text-slate-900 outline-none"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
@@ -330,10 +331,10 @@ export default function UsersPage() {
                 {loading ? (
                     <div className="p-32 flex flex-col items-center justify-center text-slate-400">
                         <div className="relative mb-6">
-                            <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl animate-pulse" />
-                            <Loader2 className="h-10 w-10 animate-spin text-blue-600 relative z-10" />
+                            <div className="absolute inset-0 bg-[#588157]/20 rounded-full blur-xl animate-pulse" />
+                            <Loader2 className="h-10 w-10 animate-spin text-[#3a5a40] relative z-10" />
                         </div>
-                        <p className="font-bold text-sm uppercase tracking-widest text-blue-600/80">Accessing Secure Directory...</p>
+                        <p className="font-bold text-sm uppercase tracking-widest text-[#3a5a40]/80">Accessing Secure Directory...</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto pb-4">
@@ -344,7 +345,7 @@ export default function UsersPage() {
                                     <th className="px-6 py-6">Role & Security</th>
                                     <th className="px-6 py-6">Department</th>
                                     <th className="px-6 py-6">Status Indicator</th>
-                                    {session?.user?.role === "DEAN" && <th className="px-10 py-6 text-right">Actions</th>}
+                                    <th className="px-10 py-6 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
@@ -390,37 +391,50 @@ export default function UsersPage() {
                 <form onSubmit={handleAddUser} className="space-y-5 p-2">
                     <div className="space-y-2">
                         <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">Full Name</label>
-                        <input name="name" required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none font-medium placeholder:text-slate-400" placeholder="e.g. John Doe" />
+                        <input name="name" required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-green-600/10 focus:border-green-600 transition-all outline-none font-medium placeholder:text-slate-400" placeholder="e.g. John Doe" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">Email Address</label>
-                        <input name="email" type="email" required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none font-medium placeholder:text-slate-400" placeholder="user@example.com" />
+                        <input name="email" type="email" required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-green-600/10 focus:border-green-600 transition-all outline-none font-medium placeholder:text-slate-400" placeholder="user@example.com" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">Security Password</label>
-                        <input name="password" type="password" required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none font-medium placeholder:text-slate-400" placeholder="••••••••" />
+                        <input name="password" type="password" required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-green-600/10 focus:border-green-600 transition-all outline-none font-medium placeholder:text-slate-400" placeholder="••••••••" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">Permission Role</label>
-                        <select name="role" required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none font-medium text-slate-700">
-                            <option value="ADMIN">System Admin</option>
-                            <option value="DEAN">Academic Dean</option>
-                            <option value="HOD">Department Head</option>
-                            <option value="LAB_INCHARGE">Lab Incharge</option>
+                        <select name="role" required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-green-600/10 focus:border-green-600 transition-all outline-none font-medium text-slate-700">
+                            {session?.user?.role === "DEAN" ? (
+                                <>
+                                    <option value="ADMIN">System Admin</option>
+                                    <option value="HOD">Department Head</option>
+                                    <option value="DEAN">Academic Dean</option>
+                                    <option value="LAB_INCHARGE">Lab Incharge</option>
+                                </>
+                            ) : session?.user?.role === "HOD" ? (
+                                <option value="LAB_INCHARGE">Lab Incharge</option>
+                            ) : (
+                                <option value="USER">Standard User</option>
+                            )}
                         </select>
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">Department Override</label>
-                        <select name="departmentId" className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none font-medium text-slate-700">
-                            <option value="">No Department (Global)</option>
-                            {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-                        </select>
-                    </div>
+                    {session?.user?.role === "DEAN" && (
+                        <div className="space-y-2">
+                            <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">Department Override</label>
+                            <select name="departmentId" className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-green-600/10 focus:border-green-600 transition-all outline-none font-medium text-slate-700">
+                                <option value="">No Department (Global)</option>
+                                {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                            </select>
+                        </div>
+                    )}
+                    {session?.user?.role === "HOD" && (
+                        <input type="hidden" name="departmentId" value={session.user.departmentId || ""} />
+                    )}
                     <div className="pt-4">
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black rounded-2xl shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-xs hover:-translate-y-0.5"
+                            className="w-full py-4 bg-gradient-to-r from-[#344e41] to-[#3a5a40] text-white font-black rounded-2xl shadow-lg shadow-[#344e41]/20 hover:shadow-xl hover:shadow-[#344e41]/30 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-xs hover:-translate-y-0.5"
                         >
                             {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : "CREATE ACCESS ACCOUNT"}
                         </button>
