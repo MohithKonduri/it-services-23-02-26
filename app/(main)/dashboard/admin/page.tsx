@@ -144,7 +144,7 @@ export default function AdminDashboard() {
         <div className="relative min-h-screen bg-slate-50/50 p-6 lg:p-8 space-y-8 selection:bg-blue-500/30 overflow-hidden text-slate-900">
             {/* Ambient Animated Background Glows */}
             <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-                <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-400/10 rounded-full blur-[120px] mix-blend-multiply animate-pulse duration-[8000ms]" />
+                <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-400/10 rounded-full blur-[120px] mix-blend-multiply animate-pulse [animation-duration:8s]" />
                 <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-indigo-400/10 rounded-full blur-[100px] mix-blend-multiply" />
             </div>
 
