@@ -41,10 +41,10 @@ export default function NotificationsPage() {
 
     const getActionColor = (action: string) => {
         switch (action?.toUpperCase()) {
-            case "CREATE": return "text-green-600 bg-green-50 border-green-200";
+            case "CREATE": return "text-[#3a5a40] bg-[#dad7cd]/40 border-[#a3b18a]/30";
             case "UPDATE": return "text-blue-600 bg-blue-50 border-blue-200";
             case "DELETE": return "text-red-600 bg-red-50 border-red-200";
-            case "APPROVE": return "text-emerald-600 bg-emerald-50 border-emerald-200";
+            case "APPROVE": return "text-[#344e41] bg-[#dad7cd]/10 border-[#a3b18a]/30";
             case "REJECT": return "text-rose-600 bg-rose-50 border-rose-200";
             case "LOGIN": return "text-purple-600 bg-purple-50 border-purple-200";
             default: return "text-slate-600 bg-slate-50 border-slate-200";
@@ -65,15 +65,13 @@ export default function NotificationsPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900 mb-2">
+                    <h1 className="text-3xl font-black text-[#344e41] mb-2 uppercase tracking-tighter italic">
                         System History
                     </h1>
-                    <p className="text-slate-500 text-sm">
+                    <p className="text-slate-500 text-sm font-medium">
                         Track all system activities and audit logs in real-time.
                     </p>
                 </div>
-
-
             </div>
 
             {/* Filter Bar */}
@@ -84,10 +82,10 @@ export default function NotificationsPage() {
                             key={f}
                             onClick={() => setFilter(f)}
                             className={cn(
-                                "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border",
+                                "px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap border",
                                 filter === f
-                                    ? "bg-slate-900 text-white border-slate-900 shadow-lg"
-                                    : "bg-white text-slate-500 border-slate-200 hover:border-green-400 hover:text-green-600"
+                                    ? "bg-[#344e41] text-white border-[#344e41] shadow-lg shadow-[#344e41]/20"
+                                    : "bg-white text-slate-500 border-slate-200 hover:border-[#a3b18a]/60 hover:text-[#3a5a40]"
                             )}
                         >
                             {f}
@@ -95,12 +93,12 @@ export default function NotificationsPage() {
                     ))}
                 </div>
 
-                <div className="relative w-full md:w-64">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <div className="relative w-full md:w-64 group">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-[#588157]" />
                     <input
                         type="text"
                         placeholder="Search logs..."
-                        className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-green-500 outline-none transition-all font-medium"
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-[#588157] outline-none transition-all font-bold text-[#344e41]"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
@@ -108,9 +106,9 @@ export default function NotificationsPage() {
             </div>
 
             {loading ? (
-                <div className="flex flex-col items-center justify-center h-64 text-slate-400">
-                    <Loader2 className="h-8 w-8 animate-spin mb-3 text-green-500" />
-                    <p className="text-xs font-medium uppercase tracking-wider">Loading history...</p>
+                <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+                    <Loader2 className="h-10 w-10 animate-spin mb-4 text-[#3a5a40]" />
+                    <p className="text-xs font-black uppercase tracking-[0.3em] text-[#344e41] italic">Loading System Records...</p>
                 </div>
             ) : (
                 <div className="grid gap-4 max-w-5xl">
@@ -129,9 +127,9 @@ export default function NotificationsPage() {
                                 <div
                                     key={`${act.id}-${idx}`}
                                     onClick={() => setSelectedActivity(act)}
-                                    className="group bg-white p-5 rounded-2xl border border-slate-200 hover:border-green-400 hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden"
+                                    className="group bg-white p-6 rounded-[2rem] border border-slate-100 hover:border-[#a3b18a]/40 hover:shadow-2xl hover:shadow-[#344e41]/5 transition-all duration-500 cursor-pointer relative overflow-hidden"
                                 >
-                                    <div className="absolute top-0 left-0 w-1 h-full bg-transparent group-hover:bg-green-500 transition-colors" />
+                                    <div className="absolute top-0 left-0 w-1.5 h-full bg-transparent group-hover:bg-[#3a5a40] transition-colors" />
 
                                     <div className="flex flex-col md:flex-row md:items-center gap-6">
                                         {/* Icon & Action */}
@@ -140,10 +138,10 @@ export default function NotificationsPage() {
                                                 <ActivityIcon className="h-5 w-5" />
                                             </div>
                                             <div>
-                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
                                                     {act.action}
                                                 </p>
-                                                <p className="font-bold text-slate-900">
+                                                <p className="font-black text-[#344e41] uppercase tracking-tighter">
                                                     {act.entity === "TICKET" ? "REQUEST" : act.entity}
                                                 </p>
                                             </div>
@@ -151,7 +149,7 @@ export default function NotificationsPage() {
 
                                         {/* Details */}
                                         <div className="flex-1">
-                                            <p className="text-sm text-slate-600 leading-relaxed line-clamp-2 md:line-clamp-1 group-hover:text-slate-900 transition-colors">
+                                            <p className="text-sm font-medium text-slate-600 leading-relaxed line-clamp-2 md:line-clamp-1 group-hover:text-[#344e41] transition-colors">
                                                 {act.details || "System event captured successfully."}
                                             </p>
                                         </div>
@@ -159,10 +157,10 @@ export default function NotificationsPage() {
                                         {/* Metadata */}
                                         <div className="flex items-center gap-6 md:justify-end min-w-[200px] border-t md:border-t-0 pt-4 md:pt-0 border-slate-100">
                                             <div className="flex items-center gap-2">
-                                                <div className="h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-600">
+                                                <div className="h-7 w-7 rounded-[10px] bg-[#dad7cd]/40 flex items-center justify-center text-[11px] font-black text-[#3a5a40] border border-[#a3b18a]/30">
                                                     {act.user?.name?.charAt(0) || "S"}
                                                 </div>
-                                                <span className="text-xs font-medium text-slate-600 truncate max-w-[100px]">
+                                                <span className="text-xs font-black text-[#344e41] tracking-tight truncate max-w-[100px] uppercase">
                                                     {act.user?.name || "System"}
                                                 </span>
                                             </div>
@@ -189,7 +187,6 @@ export default function NotificationsPage() {
                 </div>
             )}
 
-            {/* Detail Modal */}
             <Modal
                 isOpen={!!selectedActivity}
                 onClose={() => setSelectedActivity(null)}
@@ -204,11 +201,11 @@ export default function NotificationsPage() {
                                 <FileText className="h-6 w-6" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-slate-900">
+                                <h3 className="text-lg font-black text-[#344e41] uppercase tracking-tight">
                                     {selectedActivity.action} {selectedActivity.entity === "TICKET" ? "REQUEST" : selectedActivity.entity}
                                 </h3>
-                                <p className="text-sm text-slate-500 mt-1">
-                                    ID: <span className="font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">{selectedActivity.id}</span>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
+                                    Reference ID: <span className="font-mono text-[#3a5a40] bg-[#dad7cd]/30 px-2 py-0.5 rounded ml-1">{selectedActivity.id}</span>
                                 </p>
                             </div>
                         </div>
@@ -226,10 +223,10 @@ export default function NotificationsPage() {
                             <div className="p-4 rounded-xl border border-slate-200">
                                 <div className="flex items-center gap-2 mb-2">
                                     <User className="h-4 w-4 text-slate-400" />
-                                    <span className="text-xs font-semibold text-slate-500 uppercase">Actor</span>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Actor</span>
                                 </div>
-                                <p className="text-sm font-bold text-slate-900">{selectedActivity.user?.name || "System"}</p>
-                                <p className="text-xs text-green-600 font-medium mt-0.5">{selectedActivity.user?.role || "SYSTEM_PROCESS"}</p>
+                                <p className="text-sm font-black text-[#344e41]">{selectedActivity.user?.name || "System"}</p>
+                                <p className="text-[10px] text-[#3a5a40] font-black mt-1 uppercase tracking-widest">{selectedActivity.user?.role || "SYSTEM_PROCESS"}</p>
                             </div>
 
                             <div className="p-4 rounded-xl border border-slate-200">
@@ -249,9 +246,9 @@ export default function NotificationsPage() {
                         <div className="flex justify-end pt-2">
                             <button
                                 onClick={() => setSelectedActivity(null)}
-                                className="px-6 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
+                                className="px-8 py-3 bg-[#344e41] text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-[#3a5a40] transition-all shadow-xl shadow-[#344e41]/10"
                             >
-                                Close
+                                Close Records
                             </button>
                         </div>
                     </div>

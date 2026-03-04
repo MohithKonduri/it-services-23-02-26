@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "IT Asset Management System",
-    description: "Manage IT assets efficiently",
+    title: "Vignan Institute IT Services",
+    description: "Vignan Institute of Technology and Science - Asset Management",
 };
 
 import { AuthProvider } from "@/components/providers/AuthProvider";

@@ -11,7 +11,7 @@ const userSchema = z.object({
     name: z.string().min(1, "Name is required"),
     email: z.string().min(1, "Email is required").email("Invalid email"),
     password: z.string().min(8, "Password must be at least 8 characters"),
-    role: z.enum(["USER", "HOD", "LAB_INCHARGE"]).optional(),
+    role: z.enum(["USER", "HOD", "LAB_INCHARGE", "ADMIN", "DEAN"]).optional(),
     departmentId: z.string().optional(),
     departmentName: z.string().optional(),
 });
@@ -22,18 +22,46 @@ export async function POST(req: Request) {
         const body = await req.json();
         const { email, password, name, role, departmentId, departmentName } = userSchema.parse(body);
 
-        // RBAC: Only DEAN can register someone as ACTIVE with a specialized role
-        // Public registration for HOD/LAB_INCHARGE is allowed but will be set to PENDING
-        if (role && role !== "USER") {
-            const isSelfRegistering = !session || session.user.role !== "DEAN";
-            const allowedPublicRoles = ["HOD", "LAB_INCHARGE"];
+        // RBAC Logic
+        const targetRole = role || "USER";
+        let isAuthorized = false;
+        let setAsActive = false;
 
-            if (isSelfRegistering && !allowedPublicRoles.includes(role)) {
-                return NextResponse.json(
-                    { message: "Unauthorized: Only the Dean can register specialized roles" },
-                    { status: 403 }
-                );
+        if (!session) {
+            // Public registration - only USER role or PENDING HOD/LAB_INCHARGE
+            if (targetRole === "USER") {
+                isAuthorized = true;
+                setAsActive = true;
+            } else if (["HOD", "LAB_INCHARGE"].includes(targetRole)) {
+                isAuthorized = true;
+                setAsActive = false; // Results in PENDING
             }
+        } else {
+            const currentUserRole = session.user.role;
+
+            if (currentUserRole === "DEAN") {
+                // Dean can create anyone as ACTIVE
+                isAuthorized = true;
+                setAsActive = true;
+            } else if (currentUserRole === "HOD" && targetRole === "LAB_INCHARGE") {
+                // HOD can create Lab Incharge for their department
+                isAuthorized = true;
+                setAsActive = true;
+            } else if (currentUserRole === "ADMIN") {
+                // Admin can create Users? Or maybe nothing specialized.
+                // Let's stick to the prompt: Dean creates Admin, HOD creates Lab Incharge.
+                if (targetRole === "USER") {
+                    isAuthorized = true;
+                    setAsActive = true;
+                }
+            }
+        }
+
+        if (!isAuthorized) {
+            return NextResponse.json(
+                { message: "Unauthorized: You do not have permission to register this role." },
+                { status: 403 }
+            );
         }
 
         const existingUser = await db.user.findUnique({
@@ -48,27 +76,24 @@ export async function POST(req: Request) {
         }
 
         const hashedPassword = await hash(password, 10);
-        const targetRole = role || "USER";
-        const isApprovalRequired = (targetRole === "HOD" || targetRole === "LAB_INCHARGE") && (!session || session.user.role !== "DEAN");
+        const isApprovalRequired = !setAsActive;
 
         // Handle Department Creation/Assignment
         let finalDeptId = departmentId || null;
 
+        // If HOD is creating a Lab Incharge, force their department
+        if (session?.user?.role === "HOD" && targetRole === "LAB_INCHARGE") {
+            finalDeptId = session.user.departmentId || null;
+        }
+
         if (!finalDeptId && departmentName && targetRole === "HOD") {
-            // First check if a department with this name already exists
             const existingDept = await db.department.findFirst({
-                where: {
-                    name: {
-                        equals: departmentName
-                    }
-                }
+                where: { name: { equals: departmentName } }
             });
 
             if (existingDept) {
-                // Use the existing department ID
                 finalDeptId = existingDept.id;
             } else {
-                // Create a new department if it truly doesn't exist
                 const newDept = await db.department.create({
                     data: {
                         name: departmentName,
@@ -92,7 +117,7 @@ export async function POST(req: Request) {
         });
 
         if (isApprovalRequired) {
-            if (!finalDeptId) {
+            if (!finalDeptId && targetRole !== "USER") {
                 return NextResponse.json({ message: "Department is required for specialized role registration" }, { status: 400 });
             }
 
@@ -100,11 +125,11 @@ export async function POST(req: Request) {
                 data: {
                     requestNumber: `REQ-ACC-${Math.floor(1000 + Math.random() * 9000)}`,
                     title: `Account Approval: ${name} (${targetRole})`,
-                    description: `A new ${targetRole} account for ${name} (${email}) is pending institutional approval. Department: ${departmentName || 'Existing Department'}.`,
+                    description: `A new ${targetRole} account for ${name} (${email}) is pending institutional approval.`,
                     type: "ACCOUNT_APPROVAL",
                     priority: "HIGH",
                     status: "PENDING",
-                    departmentId: finalDeptId,
+                    departmentId: finalDeptId || "", // Assuming fallback handled if needed
                     createdById: newUser.id,
                 }
             });
@@ -119,7 +144,6 @@ export async function POST(req: Request) {
             departmentId: finalDeptId || undefined
         });
 
-        // Remove password from response
         const { password: newUserPassword, ...rest } = newUser;
 
         return NextResponse.json(
@@ -133,9 +157,13 @@ export async function POST(req: Request) {
         );
     } catch (error: any) {
         console.error("Registration error:", error);
+        if (error instanceof z.ZodError) {
+            return NextResponse.json({ message: error.issues[0].message }, { status: 400 });
+        }
         return NextResponse.json(
             { message: error?.message || "Something went wrong" },
             { status: 500 }
         );
     }
 }
+

@@ -29,7 +29,7 @@ export default function DeanLoginPage() {
             });
 
             if (res?.error) {
-                setError("Invalid credentials");
+                setError(res.error === "CredentialsSignin" ? "Invalid email or password" : res.error);
                 setLoading(false);
             } else {
                 const response = await fetch("/api/auth/session");
@@ -61,7 +61,7 @@ export default function DeanLoginPage() {
                 className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-500 to-emerald-600 p-12 flex-col relative overflow-hidden"
             >
                 <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:60px_60px]" />
-                <div className="absolute inset-0 bg-gradient-to-t from-emerald-600/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-green-600/50 to-transparent" />
 
                 <div className="relative z-10">
                     <button
@@ -91,12 +91,9 @@ export default function DeanLoginPage() {
                         Dean Portal
                     </motion.h1>
                     <p className="text-xl text-white/80 mb-8">
-                        Executive Management & Oversight
+                        Executive Management & Operations
                     </p>
-
                 </div>
-
-
             </motion.div>
 
             {/* Right Side - Login Form */}
@@ -124,7 +121,7 @@ export default function DeanLoginPage() {
                                 Dean Login
                             </h2>
                             <p className="text-slate-600 dark:text-slate-400">
-                                Enter your credentials to access the dean portal
+                                Enter your credentials to access the Dean portal
                             </p>
                         </div>
 
@@ -178,6 +175,15 @@ export default function DeanLoginPage() {
                                         )}
                                     </button>
                                 </div>
+                                <div className="mt-2 text-right">
+                                    <button
+                                        type="button"
+                                        onClick={() => router.push("/login/dean/forgot-password")}
+                                        className="text-sm text-green-600 hover:text-green-700 font-medium hover:underline transition-colors"
+                                    >
+                                        Forgot Password?
+                                    </button>
+                                </div>
                             </div>
 
                             <AnimatePresence>
@@ -219,9 +225,16 @@ export default function DeanLoginPage() {
                             </button>
                         </form>
 
-                        <div className="mt-6 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
-                            <p className="text-xs text-slate-600 dark:text-slate-400 text-center">
-                                <span className="font-medium">Demo Credentials:</span> dean@example.com / admin123
+                        <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+                            <p className="text-xs font-black uppercase tracking-widest text-slate-400">
+                                New Dean Authority?
+                                <button
+                                    type="button"
+                                    onClick={() => router.push("/register/dean")}
+                                    className="ml-2 text-green-600 hover:text-green-700 font-black hover:underline transition-colors"
+                                >
+                                    Register for Acceptance
+                                </button>
                             </p>
                         </div>
                     </motion.div>

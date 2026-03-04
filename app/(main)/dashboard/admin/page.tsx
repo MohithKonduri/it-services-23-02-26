@@ -21,6 +21,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Modal } from "@/components/ui/modal";
 import useSWR from "swr";
+import { motion, AnimatePresence } from "framer-motion";
 import { RequestSparePartModal } from "@/components/inventory/RequestSparePartModal";
 import { Package } from "lucide-react";
 
@@ -141,51 +142,61 @@ export default function AdminDashboard() {
     }
 
     return (
-        <div className="relative min-h-screen bg-slate-50/50 p-6 lg:p-8 space-y-8 selection:bg-blue-500/30 overflow-hidden text-slate-900">
-            {/* Ambient Animated Background Glows */}
+        <div className="relative min-h-screen bg-[#fafafa] p-6 lg:p-10 space-y-10 selection:bg-[#2d6a4f]/30 overflow-hidden text-slate-900 font-sans">
+            {/* Ambient Nature Mesh Backgrounds */}
             <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-                <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-400/10 rounded-full blur-[120px] mix-blend-multiply animate-pulse [animation-duration:8s]" />
-                <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-indigo-400/10 rounded-full blur-[100px] mix-blend-multiply" />
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 2 }}
+                    className="absolute top-[-10%] left-[-5%] w-[60%] h-[60%] bg-[#ecf39e]/30 rounded-full blur-[120px]"
+                />
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 2, delay: 0.5 }}
+                    className="absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] bg-[#91a84b]/20 rounded-full blur-[100px]"
+                />
             </div>
 
             <div className="relative z-10 space-y-8 max-w-[1600px] mx-auto">
                 {/* Premium Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200/60 backdrop-blur-sm">
                     <div className="space-y-1.5">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100/50 mb-1">
-                            <Activity className="w-3.5 h-3.5 text-blue-600" />
-                            <span className="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Admin Control Center</span>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 border border-green-100/50 mb-1">
+                            <Activity className="w-3.5 h-3.5 text-green-600" />
+                            <span className="text-[9px] font-bold text-green-600 uppercase tracking-widest">Admin Control Center</span>
                         </div>
-                        <h1 className="text-3xl lg:text-4xl font-black tracking-tighter uppercase italic flex items-center gap-3">
-                            Operation <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Mastery</span>
+                        <h1 className="text-4xl lg:text-5xl font-black tracking-tight text-[#1b4332] flex items-center gap-4 uppercase italic">
+                            Operation <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2d6a4f] to-[#b7e4c7]">Mastery</span>
                         </h1>
                         <div className="flex items-center gap-2">
                             <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#c5a059]/40 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#c5a059]"></span>
                             </span>
-                            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">System Oversight • Infrastructure Sync</p>
+                            <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">Live <span className="text-[#c5a059]">Oversight</span> • Infrastructure Sync</p>
                         </div>
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-center gap-4">
                         <div className="relative group w-full sm:w-64">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-green-500 transition-colors" />
                             <input
                                 type="text"
                                 placeholder="Search inventory..."
-                                className="w-full pl-11 pr-4 py-3.5 bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 font-semibold shadow-sm transition-all"
+                                className="w-full pl-11 pr-4 py-3.5 bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl text-sm focus:ring-4 focus:ring-green-500/10 focus:border-green-500 font-semibold shadow-sm transition-all"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />
                         </div>
-                        <div className="flex items-center gap-4 bg-white/80 backdrop-blur-md p-3 rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => setIsRequestModalOpen(true)}>
-                            <div className="bg-gradient-to-br from-indigo-500 to-blue-600 p-2.5 rounded-xl shadow-inner group-hover:scale-105 transition-transform">
+                        <div className="flex items-center gap-4 bg-white/40 backdrop-blur-md p-4 rounded-[28px] border border-white/60 shadow-xl shadow-slate-200/20 cursor-pointer group" onClick={() => setIsRequestModalOpen(true)}>
+                            <div className="bg-gradient-to-br from-[#1b4332] to-[#2d6a4f] p-3 rounded-2xl shadow-lg shadow-[#1b4332]/20 group-hover:scale-105 transition-transform">
                                 <Package className="h-5 w-5 text-white" />
                             </div>
                             <div className="pr-4">
-                                <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-0.5">Inventory</p>
-                                <p className="text-sm font-bold text-slate-800">Request Spare Part</p>
+                                <p className="text-[10px] font-black text-[#1b4332] uppercase tracking-[0.2em] mb-0.5">Inventory</p>
+                                <p className="text-xs font-black text-slate-900 uppercase tracking-tight">Request Spare Part</p>
                             </div>
                         </div>
                     </div>
@@ -199,50 +210,49 @@ export default function AdminDashboard() {
                             value: stats?.totalSystems || 0,
                             change: "Inventory",
                             icon: Shield,
-                            colors: "from-blue-600 hover:from-blue-500 to-indigo-700 hover:to-indigo-600",
-                            shadow: "shadow-blue-500/20",
-                            text: "text-white"
+                            colors: "from-[#1b4332] to-[#2d6a4f]",
+                            shadow: "shadow-[#1b4332]/20",
+                            text: "text-[#b7e4c7]"
                         },
                         {
                             label: "Pending Tasks",
                             value: stats?.pendingTickets || 0,
                             change: "Awaiting",
                             icon: Clock,
-                            colors: "from-white to-slate-50 border border-slate-200/60 hover:border-slate-300",
-                            shadow: "shadow-slate-200/40",
-                            text: "text-slate-900",
-                            iconColor: "text-orange-500",
-                            bgOverlay: "bg-orange-50"
+                            colors: "from-[#2d6a4f] to-[#40916c]",
+                            shadow: "shadow-[#2d6a4f]/20",
+                            text: "text-[#d8f3dc]"
                         },
                         {
                             label: "In Process",
                             value: stats?.inProgressTickets || 0,
                             change: "Active",
                             icon: AlertCircle,
-                            colors: stats?.inProgressTickets > 0 ? "from-red-500 hover:from-red-400 to-rose-600 hover:to-rose-500" : "from-white to-slate-50 border border-slate-200/60 hover:border-slate-300",
-                            shadow: stats?.inProgressTickets > 0 ? "shadow-red-500/20" : "shadow-slate-200/40",
+                            colors: stats?.inProgressTickets > 0 ? "from-[#40916c] to-[#95d5b2]" : "from-white to-slate-50 border border-slate-200/60",
+                            shadow: stats?.inProgressTickets > 0 ? "shadow-[#40916c]/20" : "shadow-slate-200/20",
                             text: stats?.inProgressTickets > 0 ? "text-white" : "text-slate-900",
-                            iconColor: stats?.inProgressTickets > 0 ? "text-white" : "text-red-500",
-                            bgOverlay: stats?.inProgressTickets > 0 ? "bg-white/10" : "bg-red-50"
+                            iconColor: stats?.inProgressTickets > 0 ? "text-white" : "text-[#2d6a4f]",
+                            bgOverlay: "bg-white/10"
                         },
                         {
                             label: "Resolved Today",
                             value: stats?.completedToday || 0,
                             change: "Ready",
                             icon: CheckCircle2,
-                            colors: "from-emerald-500 hover:from-emerald-400 to-teal-600 hover:to-teal-500",
-                            shadow: "shadow-emerald-500/20",
+                            colors: "from-[#1b4332] to-[#40916c]",
+                            shadow: "shadow-[#1b4332]/20",
                             text: "text-white"
                         },
                     ].map((stat, i) => (
-                        <div
+                        <motion.div
                             key={i}
+                            whileHover={{ y: -5, scale: 1.02 }}
                             className={cn(
-                                `bg-gradient-to-br ${stat.colors} p-6 rounded-3xl shadow-xl ${stat.shadow} relative group overflow-hidden transition-all duration-500 hover:-translate-y-1 cursor-pointer`
+                                `bg-gradient-to-br ${stat.colors} p-7 rounded-[32px] shadow-xl ${stat.shadow} relative group overflow-hidden transition-all duration-500 cursor-pointer`
                             )}
                         >
                             <div className={cn(
-                                "absolute -right-6 -top-6 w-32 h-32 rounded-full opacity-20 group-hover:scale-150 transition-transform duration-700 blur-2xl",
+                                "absolute -right-6 -top-6 w-32 h-32 rounded-full opacity-20 group-hover:scale-150 transition-transform duration-[700ms] blur-2xl",
                                 stat.bgOverlay || "bg-white"
                             )} />
                             <div className={cn(
@@ -278,7 +288,7 @@ export default function AdminDashboard() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
 
@@ -291,42 +301,42 @@ export default function AdminDashboard() {
                                     <button
                                         onClick={() => setActiveQueue("TICKETS")}
                                         className={cn(
-                                            "text-xl font-bold transition-colors relative pb-1",
-                                            activeQueue === "TICKETS" ? "text-slate-900" : "text-slate-400 hover:text-slate-600"
+                                            "text-xl font-black transition-colors relative pb-3 uppercase tracking-tight italic",
+                                            activeQueue === "TICKETS" ? "text-[#1b4332]" : "text-slate-400 hover:text-[#2d6a4f]"
                                         )}
                                     >
                                         Service Requests
-                                        {activeQueue === "TICKETS" && <div className="absolute bottom-0 left-0 w-full h-1 bg-green-600 rounded-full" />}
+                                        {activeQueue === "TICKETS" && <div className="absolute bottom-0 left-0 w-full h-1.5 bg-[#2d6a4f] rounded-full" />}
                                     </button>
                                     <button
                                         onClick={() => setActiveQueue("REQUESTS")}
                                         className={cn(
-                                            "text-xl font-bold transition-colors relative pb-1",
-                                            activeQueue === "REQUESTS" ? "text-slate-900" : "text-slate-400 hover:text-slate-600"
+                                            "text-xl font-black transition-colors relative pb-3 uppercase tracking-tight italic",
+                                            activeQueue === "REQUESTS" ? "text-[#1b4332]" : "text-slate-400 hover:text-[#2d6a4f]"
                                         )}
                                     >
                                         Resource Requests
                                         {requests.length > 0 && (
-                                            <span className="ml-2 px-1.5 py-0.5 bg-green-100 text-green-600 rounded-md text-[10px] font-black">
+                                            <span className="ml-2 px-2 py-0.5 bg-[#d8f3dc] text-[#1b4332] rounded-lg text-[10px] font-black border border-[#b7e4c7]">
                                                 {requests.filter(r => r.status === "APPROVED").length}
                                             </span>
                                         )}
-                                        {activeQueue === "REQUESTS" && <div className="absolute bottom-0 left-0 w-full h-1 bg-green-600 rounded-full" />}
+                                        {activeQueue === "REQUESTS" && <div className="absolute bottom-0 left-0 w-full h-1.5 bg-[#2d6a4f] rounded-full" />}
                                     </button>
                                     <button
                                         onClick={() => setActiveQueue("INVENTORY")}
                                         className={cn(
-                                            "text-xl font-bold transition-colors relative pb-1",
-                                            activeQueue === "INVENTORY" ? "text-slate-900" : "text-slate-400 hover:text-slate-600"
+                                            "text-xl font-black transition-colors relative pb-3 uppercase tracking-tight italic",
+                                            activeQueue === "INVENTORY" ? "text-[#1b4332]" : "text-slate-400 hover:text-[#2d6a4f]"
                                         )}
                                     >
                                         Spare Parts
                                         {inventoryRequests.length > 0 && (
-                                            <span className="ml-2 px-1.5 py-0.5 bg-blue-100 text-blue-600 rounded-md text-[10px] font-black">
+                                            <span className="ml-2 px-2 py-0.5 bg-[#d8f3dc] text-[#1b4332] rounded-lg text-[10px] font-black border border-[#b7e4c7]">
                                                 {inventoryRequests.length}
                                             </span>
                                         )}
-                                        {activeQueue === "INVENTORY" && <div className="absolute bottom-0 left-0 w-full h-1 bg-blue-600 rounded-full" />}
+                                        {activeQueue === "INVENTORY" && <div className="absolute bottom-0 left-0 w-full h-1.5 bg-[#2d6a4f] rounded-full" />}
                                     </button>
                                 </div>
                                 <Link href={activeQueue === "TICKETS" ? "/tickets" : "#"} className="text-sm font-medium text-green-600 hover:text-green-700">View All</Link>
@@ -420,7 +430,7 @@ export default function AdminDashboard() {
                                                                 setSelectedRequest(request);
                                                                 setIsProcessingModalOpen(true);
                                                             }}
-                                                            className="text-[10px] font-black text-green-600 uppercase tracking-widest hover:underline mt-2"
+                                                            className="text-[10px] font-black text-[#2d6a4f] uppercase tracking-widest hover:text-[#1b4332] transition-colors mt-2 underline decoration-[#b7e4c7] underline-offset-4"
                                                         >
                                                             Process Request
                                                         </button>
@@ -442,7 +452,7 @@ export default function AdminDashboard() {
                                                     <div className="text-[10px] font-black text-slate-300 w-4 mt-1.5">
                                                         {String(index + 1).padStart(2, '0')}
                                                     </div>
-                                                    <div className={`mt-1.5 h-3 w-3 rounded-full flex-shrink-0 bg-blue-500`} />
+                                                    <div className={`mt-1.5 h-3 w-3 rounded-full flex-shrink-0 bg-green-500`} />
                                                     <div>
                                                         <h4 className="font-semibold text-slate-900 uppercase text-sm tracking-wide">
                                                             {request.inventoryItem?.name} {request.quantity > 1 ? `x${request.quantity}` : ""}
@@ -454,7 +464,7 @@ export default function AdminDashboard() {
                                                             </p>
                                                         )}
                                                         <div className="flex items-center gap-2 mt-3">
-                                                            <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-blue-50 text-blue-600 border border-blue-100">
+                                                            <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-green-50 text-green-600 border border-green-100">
                                                                 SPARE PART
                                                             </span>
                                                             <span className="text-slate-400 text-[10px]">•</span>
@@ -493,10 +503,10 @@ export default function AdminDashboard() {
                                     { label: "SLA Compliance", value: 94, color: "bg-teal-500" },
                                     { label: "Uptime (Global)", value: 99.9, color: "bg-emerald-500" },
                                 ].map((item, i) => (
-                                    <div key={i} className="space-y-2">
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-slate-600 font-medium">{item.label}</span>
-                                            <span className="text-slate-900 font-bold">{item.value}%</span>
+                                    <div key={i} className="space-y-3">
+                                        <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                                            <span className="text-[#1b4332]">{item.label}</span>
+                                            <span className="text-[#2d6a4f]">{item.value}%</span>
                                         </div>
                                         <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                                             <div
@@ -509,17 +519,17 @@ export default function AdminDashboard() {
                             </div>
                         </div>
 
-                        <div className="bg-slate-900 p-6 rounded-2xl shadow-xl relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-8 transform translate-x-4 -translate-y-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
+                        <div className="bg-gradient-to-br from-[#1b4332] to-[#2d6a4f] p-8 rounded-[32px] shadow-xl relative overflow-hidden group border border-white/10">
+                            <div className="absolute top-0 right-0 p-8 transform translate-x-4 -translate-y-4 opacity-10 group-hover:scale-150 transition-transform duration-1000">
                                 <Shield className="h-32 w-32 text-white" />
                             </div>
-                            <h3 className="text-white font-bold text-lg mb-2 relative z-10">System Alert</h3>
-                            <p className="text-slate-400 text-sm mb-4 relative z-10">
-                                There are 4 high-priority hardware issues pending in CSE Lab 301. Immediate attention required.
+                            <h3 className="text-white font-black text-xl mb-2 relative z-10 italic uppercase tracking-tight">System <span className="text-[#c5a059]">Alert</span></h3>
+                            <p className="text-white/60 text-xs mb-6 relative z-10 leading-relaxed font-medium uppercase tracking-wide">
+                                There are high-priority hardware issues pending in CSE Lab 301. Immediate attention required.
                             </p>
                             <button
                                 onClick={() => router.push("/tickets")}
-                                className="w-full py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-semibold transition-colors relative z-10 shadow-lg shadow-green-900/20"
+                                className="w-full py-4 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border border-white/20 shadow-xl"
                             >
                                 Respond Now
                             </button>
