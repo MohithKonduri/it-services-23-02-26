@@ -97,7 +97,7 @@ export function Header() {
                 <Branding
                     text="VIGNAN INSTITUTE"
                     image="/vignan-logo-custom.svg"
-                    size="sm"
+                    size="md"
                     className="hidden xl:inline-flex opacity-80 hover:opacity-100 transition-opacity"
                 />
 
