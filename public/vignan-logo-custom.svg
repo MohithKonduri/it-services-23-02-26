@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Background circle purple -->
+  <circle cx="100" cy="100" r="100" fill="#8e44ad"/>
+  
+  <!-- Three blue arms -->
+  <path d="M100,100 L100,0 A100,100 0 0,0 0,100 Z" fill="#1f618d"/>
+  <path d="M100,100 L200,100 A100,100 0 0,0 100,0 Z" fill="#1f618d"/>
+  <path d="M100,100 L0,100 A100,100 0 0,0 100,200 Z" fill="#1f618d"/>
+  
+  <!-- Star in center -->
+  <circle cx="100" cy="100" r="30" fill="#ffffff"/>
+  <polygon points="100,80 107,95 123,95 110,105 115,120 100,110 85,120 90,105 77,95 93,95" fill="#3498db"/>
+</svg>

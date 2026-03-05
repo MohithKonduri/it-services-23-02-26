@@ -96,7 +96,7 @@ export function Header() {
             <div className="flex items-center gap-12">
                 <Branding
                     text="VIGNAN INSTITUTE"
-                    image="/vignan-logo-custom.png"
+                    image="/vignan-logo-custom.svg"
                     size="sm"
                     className="hidden xl:inline-flex opacity-80 hover:opacity-100 transition-opacity"
                 />
