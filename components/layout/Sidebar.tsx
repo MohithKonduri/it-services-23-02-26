@@ -85,7 +85,7 @@ export function Sidebar() {
                     }}
                 >
                     <img
-                        src="/vignan-logo-new.png"
+                        src="/vignan-logo-custom.png"
                         alt="Vignan Logo"
                         className="w-full h-full object-contain"
                     />
