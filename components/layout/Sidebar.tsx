@@ -67,10 +67,10 @@ export function Sidebar() {
     });
 
     const isDean = session?.user?.role === "DEAN";
-    const accentColor = isDean ? "#1b4332" : "#f7e479";
-    const secondaryColor = isDean ? "#2d6a4f" : "#f59e0b";
-    const highlightColor = isDean ? "#40916c" : "#34d399";
-    const activeTextColor = isDean ? "#d8f3dc" : "#ffffff";
+    const accentColor = isDean ? "#3b82f6" : "#f7e479";
+    const secondaryColor = isDean ? "#2563eb" : "#f59e0b";
+    const highlightColor = isDean ? "#10b981" : "#34d399";
+    const activeTextColor = isDean ? "#eff6ff" : "#ffffff";
 
     if (!mounted) return <aside className="fixed left-0 top-0 z-40 h-screen w-72 bg-zinc-950 border-r border-zinc-800/50" />;
 

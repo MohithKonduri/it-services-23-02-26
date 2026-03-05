@@ -15,6 +15,7 @@ import {
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { Branding } from "@/components/Branding";
 
 export function Header() {
     const { data: session } = useSession();
@@ -84,22 +85,29 @@ export function Header() {
     };
 
     const isDean = session?.user?.role === "DEAN";
-    const accentColor = isDean ? "#1b4332" : "#10b981";
-    const accentLight = isDean ? "#d8f3dc" : "#f0fdf4";
-    const accentHighlight = isDean ? "#40916c" : "#34d399";
+    const accentColor = isDean ? "#3b82f6" : "#10b981";
+    const accentLight = isDean ? "#dbeafe" : "#f0fdf4";
+    const accentHighlight = isDean ? "#10b981" : "#34d399";
 
     if (!mounted) return <header className="sticky top-0 z-30 h-24 bg-white/80 border-b border-slate-100" />;
 
     return (
         <header className="sticky top-0 z-30 h-24 bg-white/80 backdrop-blur-md border-b border-slate-100 px-10 flex items-center justify-between">
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-12">
+                <Branding
+                    text="VIGNAN INSTITUTE"
+                    image="/vignan-logo-final.png"
+                    size="sm"
+                    className="hidden xl:inline-flex opacity-80 hover:opacity-100 transition-opacity"
+                />
+
                 {/* Search */}
                 <div className="relative hidden lg:block">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                     <input
                         type="text"
                         placeholder="Search resources..."
-                        className="pl-12 pr-6 py-3.5 bg-slate-50 border-none rounded-3xl text-sm w-[440px] focus:ring-2 transition-all shadow-inner"
+                        className="pl-12 pr-6 py-3.5 bg-slate-50 border-none rounded-3xl text-sm w-[340px] focus:ring-2 transition-all shadow-inner"
                         style={{ "--tw-ring-color": accentColor } as any}
                     />
                 </div>

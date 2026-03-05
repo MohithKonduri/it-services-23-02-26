@@ -6,6 +6,8 @@ import { Hero } from "@/components/ui/hero";
 import { Leaf, Zap, Shield, Globe, FileText, Lock } from "lucide-react";
 import useSWR from "swr";
 
+import { Branding } from "@/components/Branding";
+
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Home() {
@@ -14,6 +16,16 @@ export default function Home() {
 
     return (
         <main className="relative min-h-screen bg-[#fafafa] flex flex-col items-center justify-start py-20 px-6 overflow-x-hidden selection:bg-[#2d6a4f]/30 font-sans text-slate-900">
+            {/* Premium Header */}
+            <header className="fixed top-0 left-0 w-full h-28 z-50 flex items-center justify-center bg-white/40 backdrop-blur-md border-b border-[#2d6a4f]/5 px-8">
+                <Branding
+                    text="VIGNAN INSTITUTE OF TECHNOLOGY AND SCIENCE"
+                    image="/vignan-logo-final.png"
+                    size="lg"
+                    className="scale-90 md:scale-100"
+                />
+            </header>
+
             {/* Ambient Nature Mesh Backgrounds */}
             <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
                 <motion.div
@@ -33,12 +45,8 @@ export default function Home() {
                 />
             </div>
 
-            <div className="flex-1 w-full max-w-4xl z-10 flex flex-col items-center justify-center min-h-[80vh]">
+            <div className="flex-1 w-full max-w-4xl z-10 flex flex-col items-center justify-center min-h-[80vh] mt-12">
                 <Hero
-                    trustBadge={{
-                        text: "VIGNAN INSTITUTE OF TECHNOLOGY AND SCIENCE",
-                        image: "/vignan-logo-final.png"
-                    }}
                     headline={{
                         line1: "IT",
                         line2: "Services"

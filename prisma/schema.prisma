@@ -1,6 +1,3 @@
-// This file will contain the complete database schema for the IT Asset Management System
-// Run: npx prisma db push to apply changes
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,68 +8,36 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// ============================================
-// AUTHENTICATION & USER MANAGEMENT
-// ============================================
-
 model User {
-  id           String     @id @default(uuid())
-  email        String     @unique
-  name         String
-  password     String
-  role         Role       @default(USER)
-  status       UserStatus @default(ACTIVE)
-  image        String?
-  departmentId String?
-  labId        String?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-
-  // Relations
-  department Department? @relation(fields: [departmentId], references: [id])
-  lab        Lab?        @relation(fields: [labId], references: [id])
-  accounts   Account[]
-  sessions   Session[]
-
-  // HOD Relations
-  managedDepartment Department? @relation("HODRelation")
-
-  // Lab Incharge Relations
-  managedLab Lab? @relation("LabInchargeRelation")
-
-  // Request Relations
-  requestsCreated  Request[] @relation("RequestCreator")
-  requestsApproved Request[] @relation("RequestApprover")
-
-  // Ticket Relations
-  ticketsCreated  Ticket[] @relation("TicketCreator")
-  ticketsAssigned Ticket[] @relation("TicketAssignee")
-
-  // Activity Logs
-  activityLogs ActivityLog[]
-
-  // Inventory Relations
-  inventoryRequestsMade     InventoryRequest[] @relation("InventoryRequester")
+  id                        String             @id @default(uuid())
+  email                     String             @unique
+  name                      String
+  password                  String
+  role                      Role               @default(USER)
+  status                    UserStatus         @default(ACTIVE)
+  departmentId              String?
+  labId                     String?
+  createdAt                 DateTime           @default(now())
+  updatedAt                 DateTime           @updatedAt
+  image                     String?
+  accounts                  Account[]
+  activityLogs              ActivityLog[]
+  managedDepartment         Department?        @relation("HODRelation")
   inventoryRequestsApproved InventoryRequest[] @relation("InventoryApprover")
+  inventoryRequestsMade     InventoryRequest[] @relation("InventoryRequester")
+  managedLab                Lab?               @relation("LabInchargeRelation")
+  requestsApproved          Request[]          @relation("RequestApprover")
+  requestsCreated           Request[]          @relation("RequestCreator")
+  sessions                  Session[]
+  ticketsAssigned           Ticket[]           @relation("TicketAssignee")
+  ticketsCreated            Ticket[]           @relation("TicketCreator")
+  department                Department?        @relation(fields: [departmentId], references: [id])
+  lab                       Lab?               @relation(fields: [labId], references: [id])
 
   @@index([email])
   @@index([role])
   @@index([departmentId])
   @@index([labId])
-}
-
-enum Role {
-  USER
-  LAB_INCHARGE
-  HOD
-  ADMIN
-  DEAN
-}
-
-enum UserStatus {
-  ACTIVE
-  PENDING
-  REJECTED
 }
 
 model Account {
@@ -81,15 +46,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -113,99 +77,232 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// ============================================
-// ORGANIZATIONAL STRUCTURE
-// ============================================
-
 model Department {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  code        String   @unique
-  description String?  @db.Text
-  hodId       String?  @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  hod      User?     @relation("HODRelation", fields: [hodId], references: [id])
-  labs     Lab[]
-  assets   Asset[]
-  users    User[]
-  requests Request[]
-  tickets  Ticket[]
-  activities ActivityLog[]
+  id                String             @id @default(uuid())
+  name              String             @unique
+  code              String             @unique
+  description       String?
+  hodId             String?            @unique
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  activities        ActivityLog[]
+  assets            Asset[]
+  hod               User?              @relation("HODRelation", fields: [hodId], references: [id])
   inventoryRequests InventoryRequest[] @relation("InventoryRequestDepartment")
+  labs              Lab[]
+  requests          Request[]
+  tickets           Ticket[]
+  users             User[]
 
   @@index([hodId])
 }
 
 model Lab {
-  id           String   @id @default(uuid())
-  name         String
-  code         String   @unique
-  departmentId String
-  inchargeId   String?  @unique
-  capacity     Int      @default(0)
-  location     String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  // Relations
-  department Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
-  incharge   User?      @relation("LabInchargeRelation", fields: [inchargeId], references: [id])
-  assets     Asset[]
-  users      User[]
-  tickets    Ticket[]
-  activities ActivityLog[]
+  id                String             @id @default(uuid())
+  name              String
+  code              String             @unique
+  departmentId      String
+  inchargeId        String?            @unique
+  capacity          Int                @default(0)
+  location          String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  activities        ActivityLog[]
+  assets            Asset[]
   inventoryRequests InventoryRequest[] @relation("InventoryRequestLab")
+  department        Department         @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  incharge          User?              @relation("LabInchargeRelation", fields: [inchargeId], references: [id])
+  tickets           Ticket[]
+  users             User[]
 
   @@index([departmentId])
   @@index([inchargeId])
 }
 
-// ============================================
-// ASSET MANAGEMENT
-// ============================================
-
 model Asset {
-  id             String         @id @default(uuid())
-  assetNumber    String         @unique
-  name           String
-  type           AssetType
-  category       String
-  brand          String?
-  model          String?
-  serialNumber   String?        @unique
-  macAddress     String?        @unique
-  specifications String?        @db.Text
-  purchaseDate   DateTime?
-  purchasePrice  Float?
-  warrantyExpiry DateTime?
-  processor      String?
-  ram            String?
-  hdd            String?
-  status         AssetStatus    @default(ACTIVE)
-  condition      AssetCondition @default(GOOD)
-  sheetOrder     Int?
-  assignment     String?
-  departmentId   String
-  labId          String?
-  location       String?
-  notes          String?        @db.Text
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-
-  // Relations
+  id              String           @id @default(uuid())
+  assetNumber     String           @unique
+  name            String
+  type            AssetType
+  category        String
+  brand           String?
+  model           String?
+  serialNumber    String?          @unique
+  macAddress      String?          @unique
+  specifications  String?
+  purchaseDate    DateTime?
+  purchasePrice   Float?
+  warrantyExpiry  DateTime?
+  processor       String?
+  ram             String?
+  hdd             String?
+  status          AssetStatus      @default(ACTIVE)
+  condition       AssetCondition   @default(GOOD)
+  sheetOrder      Int?
+  assignment      String?
+  departmentId    String
+  labId           String?
+  location        String?
+  notes           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
   department      Department       @relation(fields: [departmentId], references: [id])
   lab             Lab?             @relation(fields: [labId], references: [id])
-  tickets         Ticket[]
   maintenanceLogs MaintenanceLog[]
+  tickets         Ticket[]
 
   @@index([assetNumber])
   @@index([type])
   @@index([status])
   @@index([departmentId])
   @@index([labId])
+}
+
+model Request {
+  id              String        @id @default(uuid())
+  requestNumber   String        @unique
+  title           String
+  description     String
+  type            RequestType
+  priority        Priority      @default(NORMAL)
+  status          RequestStatus @default(PENDING)
+  departmentId    String
+  createdById     String
+  approvedById    String?
+  assignedAdminId String?
+  remarks         String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  approvedAt      DateTime?
+  completedAt     DateTime?
+  approvedBy      User?         @relation("RequestApprover", fields: [approvedById], references: [id])
+  createdBy       User          @relation("RequestCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  department      Department    @relation(fields: [departmentId], references: [id])
+
+  @@index([requestNumber])
+  @@index([status])
+  @@index([departmentId])
+  @@index([createdById])
+  @@index([approvedById])
+}
+
+model Ticket {
+  id           String       @id @default(uuid())
+  ticketNumber String       @unique
+  title        String
+  description  String
+  issueType    IssueType
+  priority     Priority     @default(NORMAL)
+  status       TicketStatus @default(SUBMITTED)
+  assetId      String?
+  departmentId String
+  labId        String?
+  createdById  String
+  assignedToId String?
+  resolution   String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  resolvedAt   DateTime?
+  asset        Asset?       @relation(fields: [assetId], references: [id])
+  assignedTo   User?        @relation("TicketAssignee", fields: [assignedToId], references: [id])
+  createdBy    User         @relation("TicketCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  department   Department   @relation(fields: [departmentId], references: [id])
+  lab          Lab?         @relation(fields: [labId], references: [id])
+
+  @@index([ticketNumber])
+  @@index([status])
+  @@index([assetId])
+  @@index([departmentId])
+  @@index([labId])
+  @@index([createdById])
+  @@index([assignedToId])
+}
+
+model MaintenanceLog {
+  id          String   @id @default(uuid())
+  assetId     String
+  description String
+  performedBy String
+  cost        Float?
+  performedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  asset       Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId])
+  @@index([performedAt])
+}
+
+model ActivityLog {
+  id           String      @id @default(uuid())
+  userId       String
+  action       String
+  entity       String
+  entityId     String?
+  details      String?
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime    @default(now())
+  departmentId String?
+  labId        String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  lab          Lab?        @relation(fields: [labId], references: [id])
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([entity])
+  @@index([departmentId])
+  @@index([labId])
+  @@index([createdAt])
+}
+
+model InventoryItem {
+  id          String             @id @default(uuid())
+  name        String             @unique
+  description String?
+  quantity    Int                @default(0)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  requests    InventoryRequest[]
+}
+
+model InventoryRequest {
+  id              String                 @id @default(uuid())
+  requestNumber   String                 @unique
+  inventoryItemId String
+  quantity        Int                    @default(1)
+  status          InventoryRequestStatus @default(PENDING)
+  requestedById   String
+  approvedById    String?
+  remarks         String?
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  departmentId    String?
+  labId           String?
+  approvedBy      User?                  @relation("InventoryApprover", fields: [approvedById], references: [id])
+  department      Department?            @relation("InventoryRequestDepartment", fields: [departmentId], references: [id])
+  inventoryItem   InventoryItem          @relation(fields: [inventoryItemId], references: [id])
+  lab             Lab?                   @relation("InventoryRequestLab", fields: [labId], references: [id])
+  requestedBy     User                   @relation("InventoryRequester", fields: [requestedById], references: [id])
+
+  @@index([requestedById])
+  @@index([approvedById])
+  @@index([inventoryItemId])
+  @@index([departmentId])
+  @@index([labId])
+}
+
+enum Role {
+  USER
+  LAB_INCHARGE
+  HOD
+  ADMIN
+  DEAN
+}
+
+enum UserStatus {
+  ACTIVE
+  PENDING
+  REJECTED
 }
 
 enum AssetType {
@@ -240,40 +337,6 @@ enum AssetCondition {
   DAMAGED
 }
 
-// ============================================
-// REQUEST MANAGEMENT (HOD → DEAN)
-// ============================================
-
-model Request {
-  id              String        @id @default(uuid())
-  requestNumber   String        @unique
-  title           String
-  description     String        @db.Text
-  type            RequestType
-  priority        Priority      @default(NORMAL)
-  status          RequestStatus @default(PENDING)
-  departmentId    String
-  createdById     String
-  approvedById    String?
-  assignedAdminId String?
-  remarks         String?       @db.Text
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  approvedAt      DateTime?
-  completedAt     DateTime?
-
-  // Relations
-  department Department @relation(fields: [departmentId], references: [id])
-  createdBy  User       @relation("RequestCreator", fields: [createdById], references: [id], onDelete: Cascade)
-  approvedBy User?      @relation("RequestApprover", fields: [approvedById], references: [id])
-
-  @@index([requestNumber])
-  @@index([status])
-  @@index([departmentId])
-  @@index([createdById])
-  @@index([approvedById])
-}
-
 enum RequestType {
   NEW_SYSTEM
   HARDWARE_REPAIR
@@ -291,44 +354,6 @@ enum RequestStatus {
   ASSIGNED
   IN_PROGRESS
   COMPLETED
-}
-
-// ============================================
-// TICKET MANAGEMENT (Lab Incharge → HOD → Admin)
-// ============================================
-
-model Ticket {
-  id           String       @id @default(uuid())
-  ticketNumber String       @unique
-  title        String
-  description  String       @db.Text
-  issueType    IssueType
-  priority     Priority     @default(NORMAL)
-  status       TicketStatus @default(SUBMITTED)
-  assetId      String?
-  departmentId String
-  labId        String?
-  createdById  String
-  assignedToId String?
-  resolution   String?      @db.Text
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  resolvedAt   DateTime?
-
-  // Relations
-  asset      Asset?     @relation(fields: [assetId], references: [id])
-  department Department @relation(fields: [departmentId], references: [id])
-  lab        Lab?       @relation(fields: [labId], references: [id])
-  createdBy  User       @relation("TicketCreator", fields: [createdById], references: [id], onDelete: Cascade)
-  assignedTo User?      @relation("TicketAssignee", fields: [assignedToId], references: [id])
-
-  @@index([ticketNumber])
-  @@index([status])
-  @@index([assetId])
-  @@index([departmentId])
-  @@index([labId])
-  @@index([createdById])
-  @@index([assignedToId])
 }
 
 enum IssueType {
@@ -355,97 +380,8 @@ enum Priority {
   CRITICAL
 }
 
-// ============================================
-// MAINTENANCE & ACTIVITY LOGS
-// ============================================
-
-model MaintenanceLog {
-  id          String   @id @default(uuid())
-  assetId     String
-  description String   @db.Text
-  performedBy String
-  cost        Float?
-  performedAt DateTime @default(now())
-  createdAt   DateTime @default(now())
-
-  // Relations
-  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
-
-  @@index([assetId])
-  @@index([performedAt])
-}
-
-model ActivityLog {
-  id           String   @id @default(uuid())
-  userId       String
-  action       String
-  entity       String
-  entityId     String?
-  details      String?  @db.Text
-  ipAddress    String?
-  userAgent    String?  @db.Text
-  departmentId String?
-  labId        String?
-  createdAt    DateTime @default(now())
-
-  // Relations
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  department Department? @relation(fields: [departmentId], references: [id])
-  lab        Lab?        @relation(fields: [labId], references: [id])
-
-  @@index([userId])
-  @@index([entity])
-  @@index([departmentId])
-  @@index([labId])
-  @@index([createdAt])
-}
-
-// ============================================
-// INVENTORY MANAGEMENT (ADMIN <-> DEAN)
-// ============================================
-
-model InventoryItem {
-  id           String             @id @default(uuid())
-  name         String             @unique
-  description  String?            @db.Text
-  quantity     Int                @default(0)
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-
-  requests     InventoryRequest[]
-}
-
-model InventoryRequest {
-  id              String                 @id @default(uuid())
-  requestNumber   String                 @unique
-  inventoryItemId String
-  quantity        Int                    @default(1)
-  status          InventoryRequestStatus @default(PENDING)
-  requestedById   String
-  approvedById    String?
-  remarks         String?                @db.Text
-  departmentId    String?
-  labId           String?
-  createdAt       DateTime               @default(now())
-  updatedAt       DateTime               @updatedAt
-
-  // Relations
-  inventoryItem InventoryItem @relation(fields: [inventoryItemId], references: [id])
-  requestedBy   User          @relation("InventoryRequester", fields: [requestedById], references: [id])
-  approvedBy    User?         @relation("InventoryApprover", fields: [approvedById], references: [id])
-  department    Department?   @relation("InventoryRequestDepartment", fields: [departmentId], references: [id])
-  lab           Lab?          @relation("InventoryRequestLab", fields: [labId], references: [id])
-
-  @@index([requestedById])
-  @@index([approvedById])
-  @@index([inventoryItemId])
-  @@index([departmentId])
-  @@index([labId])
-}
-
 enum InventoryRequestStatus {
   PENDING
   APPROVED
   DECLINED
 }
-

@@ -29,7 +29,14 @@ export default function DeanLoginPage() {
             });
 
             if (res?.error) {
-                setError(res.error === "CredentialsSignin" ? "Invalid email or password" : res.error);
+                const errorMessage = res.error.toLowerCase();
+                if (errorMessage.includes("credentials") || errorMessage.includes("invalid")) {
+                    setError("Invalid email or password");
+                } else if (errorMessage.includes("connect") || errorMessage.includes("database") || errorMessage.includes("prisma")) {
+                    setError("Unable to connect to service. Please try again later.");
+                } else {
+                    setError(res.error);
+                }
                 setLoading(false);
             } else {
                 const response = await fetch("/api/auth/session");
@@ -58,7 +65,7 @@ export default function DeanLoginPage() {
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
-                className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-500 to-emerald-600 p-12 flex-col relative overflow-hidden"
+                className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-500 to-green-600 p-12 flex-col relative overflow-hidden"
             >
                 <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:60px_60px]" />
                 <div className="absolute inset-0 bg-gradient-to-t from-green-600/50 to-transparent" />
@@ -114,7 +121,7 @@ export default function DeanLoginPage() {
                         className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700"
                     >
                         <div className="text-center mb-8">
-                            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl mb-4 shadow-lg">
+                            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-green-600 rounded-xl mb-4 shadow-lg">
                                 <GraduationCap className="h-8 w-8 text-white" />
                             </div>
                             <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
@@ -207,7 +214,7 @@ export default function DeanLoginPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:-translate-y-0.5"
+                                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-green-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:from-blue-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:-translate-y-0.5"
                             >
                                 {loading ? (
                                     <>
